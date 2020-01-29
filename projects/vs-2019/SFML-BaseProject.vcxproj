@@ -25,7 +25,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{514A9884-F5EA-45DD-A2F4-A4B9B54BDB01}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>bezierinterpolation</RootNamespace>
+    <RootNamespace>3DRenderModel</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>3DRenderModelProject</ProjectName>
   </PropertyGroup>

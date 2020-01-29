@@ -17,7 +17,7 @@
     #include <Point.hpp>
     #include <algorithm>
 
-    namespace example
+    namespace RenderModel
     {
 
         using toolkit::Point4i;

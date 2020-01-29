@@ -14,7 +14,7 @@
 #include <SFML/OpenGL.hpp>
 
 using namespace sf;
-using namespace example;
+using namespace RenderModel;
 
 static const size_t window_width  = 800;
 static const size_t window_height = 600;
@@ -23,7 +23,7 @@ int main ()
 {
     // Create the window and the view that will be shown within the window:
 
-    Window window(VideoMode(window_width, window_height), "Z-Buffer", Style::Titlebar | Style::Close, ContextSettings(32));
+    Window window(VideoMode(window_width, window_height), "3D Render Model", Style::Titlebar | Style::Close, ContextSettings(32));
     View   view  (window_width, window_height);
 
     // Initialization:

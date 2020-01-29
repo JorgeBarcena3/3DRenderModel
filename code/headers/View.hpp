@@ -18,7 +18,7 @@
     #include "Color_Buffer_Rgb565.hpp"
     #include "Color_Buffer_Rgba8888.hpp"
 
-    namespace example
+    namespace RenderModel
     {
 
         using std::vector;

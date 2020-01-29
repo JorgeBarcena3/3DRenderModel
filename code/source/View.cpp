@@ -20,7 +20,7 @@
 
 using namespace toolkit;
 
-namespace example
+namespace RenderModel
 {
 
     View::View(size_t width, size_t height)
