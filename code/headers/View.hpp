@@ -27,7 +27,8 @@
 
         class View
         {
-        private:
+
+        public:
 
             typedef Color_Buffer_Rgba8888 Color_Buffer;
             typedef Color_Buffer::Color   Color;

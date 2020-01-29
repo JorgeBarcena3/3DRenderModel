@@ -18,6 +18,7 @@
     <ClInclude Include="..\..\code\headers\Color_Buffer.hpp" />
     <ClInclude Include="..\..\code\headers\Color_Buffer_Rgb565.hpp" />
     <ClInclude Include="..\..\code\headers\Color_Buffer_Rgba8888.hpp" />
+    <ClInclude Include="..\..\code\headers\Model3D.hpp" />
     <ClInclude Include="..\..\code\headers\Rasterizer.hpp" />
     <ClInclude Include="..\..\code\headers\View.hpp" />
   </ItemGroup>

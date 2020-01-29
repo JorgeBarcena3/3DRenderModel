@@ -32,5 +32,8 @@
     <ClInclude Include="..\..\code\headers\View.hpp">
       <Filter>headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\code\headers\Model3D.hpp">
+      <Filter>headers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
