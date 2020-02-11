@@ -25,6 +25,7 @@ int main ()
 
     Window window(VideoMode(window_width, window_height), "3D Render Model", Style::Titlebar | Style::Close, ContextSettings(32));
     View   view  (window_width, window_height);
+    view.addModel("Cubo", Model3D(nullptr, nullptr, nullptr));
 
     // Initialization:
 
@@ -61,7 +62,7 @@ int main ()
 
         // Update the view:
 
-        view.update ();
+        view.update (0);
 
         // Repaint the view:
 

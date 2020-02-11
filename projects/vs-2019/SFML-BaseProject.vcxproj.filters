@@ -15,6 +15,15 @@
     <ClCompile Include="..\..\code\source\View.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\code\source\Model3D.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\source\Material.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\source\Mesh.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\code\headers\Color_Buffer.hpp">
@@ -33,6 +42,12 @@
       <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\code\headers\Model3D.hpp">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\headers\Material.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\headers\Mesh.h">
       <Filter>headers</Filter>
     </ClInclude>
   </ItemGroup>

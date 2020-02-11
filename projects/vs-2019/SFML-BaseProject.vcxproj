@@ -12,12 +12,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\code\source\main.cpp" />
+    <ClCompile Include="..\..\code\source\Material.cpp" />
+    <ClCompile Include="..\..\code\source\Mesh.cpp" />
+    <ClCompile Include="..\..\code\source\Model3D.cpp" />
     <ClCompile Include="..\..\code\source\View.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\code\headers\Color_Buffer.hpp" />
     <ClInclude Include="..\..\code\headers\Color_Buffer_Rgb565.hpp" />
     <ClInclude Include="..\..\code\headers\Color_Buffer_Rgba8888.hpp" />
+    <ClInclude Include="..\..\code\headers\Material.h" />
+    <ClInclude Include="..\..\code\headers\Mesh.h" />
     <ClInclude Include="..\..\code\headers\Model3D.hpp" />
     <ClInclude Include="..\..\code\headers\Rasterizer.hpp" />
     <ClInclude Include="..\..\code\headers\View.hpp" />

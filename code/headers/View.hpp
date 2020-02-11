@@ -12,58 +12,51 @@
 #ifndef VIEW_HEADER
 #define VIEW_HEADER
 
-    #include <vector>
-    #include <Point.hpp>
-    #include "Rasterizer.hpp"
-    #include "Color_Buffer_Rgb565.hpp"
-    #include "Color_Buffer_Rgba8888.hpp"
+#include <map> 
+#include <string>
+#include <memory>
+#include "Rasterizer.hpp"
+#include "Model3D.hpp"
+#include "Color_Buffer_Rgb565.hpp"
+#include "Color_Buffer_Rgba8888.hpp"
 
-    namespace RenderModel
+
+namespace RenderModel
+{
+
+    using std::map;
+    using std::string;
+    using std::shared_ptr;
+
+
+    class View
     {
 
-        using std::vector;
-        using toolkit::Point4i;
-        using toolkit::Point4f;
+    public:
 
-        class View
-        {
+        typedef Color_Buffer_Rgba8888 Color_Buffer;
+        typedef Color_Buffer::Color   Color;
+        typedef map<string, shared_ptr<Model3D>>  Models3D;
 
-        public:
 
-            typedef Color_Buffer_Rgba8888 Color_Buffer;
-            typedef Color_Buffer::Color   Color;
-            typedef Point4f               Vertex;
-            typedef vector< Vertex >      Vertex_Buffer;
-            typedef vector< int    >      Index_Buffer;
-            typedef vector< Color  >      Vertex_Colors;
+        size_t width;
+        size_t height;
 
-        private:
+        Color_Buffer               Color_buffer;
+        Rasterizer< Color_Buffer > rasterizer;
+        Models3D                   models3D;
 
-            size_t width;
-            size_t height;
 
-            Color_Buffer               Color_buffer;
-            Rasterizer< Color_Buffer > rasterizer;
+    public:
 
-            Vertex_Buffer     original_vertices;
-            Index_Buffer      original_indices;
-            Vertex_Colors     original_colors;
-            Vertex_Buffer     transformed_vertices;
-            vector< Point4i > display_vertices;
+        View(size_t width, size_t height);
 
-        public:
+        void addModel(string name, Model3D model);
+        void update(float t);
+        void paint();
 
-            View(size_t width, size_t height);
+    };
 
-            void update ();
-            void paint  ();
-
-        private:
-
-            bool is_frontface (const Vertex * const projected_vertices, const int * const indices);
-
-        };
-
-    }
+}
 
 #endif

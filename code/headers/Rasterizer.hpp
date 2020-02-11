@@ -16,6 +16,7 @@
     #include <stdint.h>
     #include <Point.hpp>
     #include <algorithm>
+    #include <vector>
 
     namespace RenderModel
     {
