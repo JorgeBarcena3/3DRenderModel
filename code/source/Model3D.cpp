@@ -1,3 +1,7 @@
+#define TINYOBJLOADER_IMPLEMENTATION // define this in only *one* .cc
+#include "tiny_obj_loader.h"
+
+
 #include <cmath>
 #include <cassert>
 #include "..\headers\Model3D.hpp"
@@ -12,27 +16,99 @@
 using namespace toolkit;
 
 
-RenderModel::Model3D::Model3D(int _vertices[][4], int _colors[][3], int _triangles[][3])
+RenderModel::Model3D::Model3D(const char * path)
 {
-    static const int vertices[][4] =
+
+    loadObj(path);
+
+    vector< vector<float> > vertices_vector;
+    vector< vector<float> > originalColors;
+    vector< vector<int  > > triangles;
+
+    tinyobj::attrib_t attrib;
+    std::vector<tinyobj::shape_t> shapes;
+    std::vector<tinyobj::material_t> materials;
+
+    std::string warn;
+    std::string err;
+
+    bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path);
+
+
+    if (ret) //Colocamos los datos necesarios
     {
-        { -4, -4, +4, 1 },      // 0   // vértices del cubo
-        { +4, -4, +4, 1 },      // 1
-        { +4, +4, +4, 1 },      // 2
-        { -4, +4, +4, 1 },      // 3
-        { -4, -4, -4, 1 },      // 4
-        { +4, -4, -4, 1 },      // 5
-        { +4, +4, -4, 1 },      // 6
-        { -4, +4, -4, 1 },      // 7
-        { -5, -5,  0, 1 },      // 8    // vértices de los polígonos cortantes
-        { +5, -5,  0, 1 },      // 9
-        { +5, +5,  0, 1 },      // 10
-        { -5, +5,  0, 1 },      // 11
-        {  0, -5, +5, 1 },      // 12
-        {  0, +5, +5, 1 },      // 13
-        {  0, +5, -5, 1 },      // 15
-        {  0, -5, -5, 1 },      // 14
-    };
+
+        for (size_t i = 0; i < attrib.GetVertices().size(); i += 3)
+        {
+            vertices_vector.push_back(
+                vector<float>({
+                    attrib.vertices[i],
+                    attrib.vertices[i + 1],
+                    attrib.vertices[i + 2],
+                    }));
+
+            originalColors.push_back(
+                vector<float>({
+                   attrib.colors[i],
+                   attrib.colors[i + 1],
+                   attrib.colors[i + 2],
+                    }));
+        }
+
+        for (auto mesh : shapes)
+        {
+            vector<int> index;
+
+            for (int i = 0; i < mesh.mesh.indices.size(); i += 3)
+            {
+                triangles.push_back(
+                    vector<int>({
+                       mesh.mesh.indices.at(i).vertex_index,
+                       mesh.mesh.indices.at(i + 1).vertex_index,
+                       mesh.mesh.indices.at(i + 2).vertex_index
+                        }));
+
+
+            }
+
+        }
+
+
+        
+    }
+
+  
+    int ** vertices = new int *[vertices_vector.size()];
+
+    for (int i = 0; i < vertices_vector.size(); ++i)
+    {
+        vertices[i] = new int[4];
+        vertices[i][0] = vertices_vector.at(i).at(0);
+        vertices[i][1] = vertices_vector.at(i).at(1);
+        vertices[i][2] = vertices_vector.at(i).at(2);
+        vertices[i][3] = vertices_vector.at(i).at(3);
+    }
+       
+
+    //static const int vertices[][4] =
+    //{
+    //    { -4, -4, +4, 1 },      // 0   // vértices del cubo
+    //    { +4, -4, +4, 1 },      // 1
+    //    { +4, +4, +4, 1 },      // 2
+    //    { -4, +4, +4, 1 },      // 3
+    //    { -4, -4, -4, 1 },      // 4
+    //    { +4, -4, -4, 1 },      // 5
+    //    { +4, +4, -4, 1 },      // 6
+    //    { -4, +4, -4, 1 },      // 7
+    //    { -5, -5,  0, 1 },      // 8    // vértices de los polígonos cortantes
+    //    { +5, -5,  0, 1 },      // 9
+    //    { +5, +5,  0, 1 },      // 10
+    //    { -5, +5,  0, 1 },      // 11
+    //    {  0, -5, +5, 1 },      // 12
+    //    {  0, +5, +5, 1 },      // 13
+    //    {  0, +5, -5, 1 },      // 15
+    //    {  0, -5, -5, 1 },      // 14
+    //};
 
     // Se cargan en un búffer los datos del array:
 
@@ -128,6 +204,64 @@ RenderModel::Model3D::Model3D(int _vertices[][4], int _colors[][3], int _triangl
 
 RenderModel::Model3D::~Model3D()
 {
+}
+
+void RenderModel::Model3D::loadObj(const char* path)
+{
+    vector< vector<float> > originalCoordinates;
+    vector< vector<float> > originalColors;
+    vector< vector<int  > > triangles;
+
+    tinyobj::attrib_t attrib;
+    std::vector<tinyobj::shape_t> shapes;
+    std::vector<tinyobj::material_t> materials;
+
+    std::string warn;
+    std::string err;
+
+    bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path);
+
+
+    if (ret) //Colocamos los datos necesarios
+    {
+
+        for (size_t i = 0; i < attrib.GetVertices().size(); i += 3)
+        {
+            originalCoordinates.push_back(
+                vector<float>({
+                    attrib.vertices[i],
+                    attrib.vertices[i + 1],
+                    attrib.vertices[i + 2],
+                }));
+            
+            originalColors.push_back(
+                 vector<float>({
+                    attrib.colors[i],
+                    attrib.colors[i + 1],
+                    attrib.colors[i + 2],
+                }));
+        }
+
+        for (auto mesh : shapes)
+        {
+            vector<int> index;
+            
+            for (int i = 0; i < mesh.mesh.indices.size(); i += 3)
+            {
+                triangles.push_back(
+                 vector<int>({
+                    mesh.mesh.indices.at(i).vertex_index,
+                    mesh.mesh.indices.at(i + 1).vertex_index,
+                    mesh.mesh.indices.at(i + 2).vertex_index
+                }));
+
+                
+            }
+            
+          
+        }
+
+    }
 }
 
 void RenderModel::Model3D::update(float t, View& view)

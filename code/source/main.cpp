@@ -13,6 +13,7 @@
 #include <SFML/Window.hpp>
 #include <SFML/OpenGL.hpp>
 
+
 using namespace sf;
 using namespace RenderModel;
 
@@ -25,7 +26,7 @@ int main ()
 
     Window window(VideoMode(window_width, window_height), "3D Render Model", Style::Titlebar | Style::Close, ContextSettings(32));
     View   view  (window_width, window_height);
-    view.addModel("Cubo", Model3D(nullptr, nullptr, nullptr));
+    view.addModel("Cubo", Model3D("..//..//assets//models//pig.obj"));
 
     // Initialization:
 

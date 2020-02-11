@@ -44,9 +44,10 @@ namespace RenderModel {
 
     public:
 
-        Model3D(int vertices[][4], int colors[][3], int triangles[][3]);
+        Model3D(const char* path);
         ~Model3D();
 
+        void loadObj(const char* path);
         void update(float t, View& view);
         void paint(View& view);  
         
