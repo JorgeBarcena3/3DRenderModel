@@ -16,14 +16,10 @@
 using namespace toolkit;
 
 
-RenderModel::Model3D::Model3D(const char * path)
+RenderModel::Model3D::Model3D(const char* path)
 {
 
-    loadObj(path);
-
-    vector< vector<float> > vertices_vector;
-    vector< vector<float> > originalColors;
-    vector< vector<int  > > triangles;
+    //loadObj(path);
 
     tinyobj::attrib_t attrib;
     std::vector<tinyobj::shape_t> shapes;
@@ -37,169 +33,112 @@ RenderModel::Model3D::Model3D(const char * path)
 
     if (ret) //Colocamos los datos necesarios
     {
+        vector< vector<float> > vertices_vector;
+        vector< vector<float> > originalColors;
+        vector< vector<int  > > triangles;
 
-        for (size_t i = 0; i < attrib.GetVertices().size(); i += 3)
+
+        // Loop over shapes
+        for (size_t s = 0; s < shapes.size(); s++)
         {
-            vertices_vector.push_back(
-                vector<float>({
-                    attrib.vertices[i],
-                    attrib.vertices[i + 1],
-                    attrib.vertices[i + 2],
-                    }));
+            vector< int  > meshIndices;
 
-            originalColors.push_back(
-                vector<float>({
-                   attrib.colors[i],
-                   attrib.colors[i + 1],
-                   attrib.colors[i + 2],
-                    }));
-        }
-
-        for (auto mesh : shapes)
-        {
-            vector<int> index;
-
-            for (int i = 0; i < mesh.mesh.indices.size(); i += 3)
+            // Loop over faces(polygon)
+            size_t index_offset = 0;
+            for (size_t f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++)
             {
-                triangles.push_back(
-                    vector<int>({
-                       mesh.mesh.indices.at(i).vertex_index,
-                       mesh.mesh.indices.at(i + 1).vertex_index,
-                       mesh.mesh.indices.at(i + 2).vertex_index
-                        }));
 
+                int facesPoligon = shapes[s].mesh.num_face_vertices[f];
+
+                triangles.push_back(vector<int>(facesPoligon));
+                vertices_vector.push_back(vector<float>(4));
+
+
+                // access to vertex
+                tinyobj::index_t id_vertice = shapes[s].mesh.indices[index_offset + vertices];
+                meshIndices.push_back(id_vertice.vertex_index);
+
+                triangles[triangles.size() - 1][vertices] = (id_vertice.vertex_index);
+
+                tinyobj::real_t vx = attrib.vertices[3 * id_vertice.vertex_index + vertices];
+                tinyobj::real_t vy = attrib.vertices[3 * id_vertice.vertex_index + 1];
+                tinyobj::real_t vz = attrib.vertices[3 * id_vertice.vertex_index + 2];
+                vertices_vector.push_back(
+                    vector<float>({
+                           vx,
+                           vy,
+                           vz,
+                           1.f
+                        })
+                );
+
+                tinyobj::real_t r = attrib.colors[3 * id_vertice.vertex_index + 0];
+                tinyobj::real_t g = attrib.colors[3 * id_vertice.vertex_index + 1];
+                tinyobj::real_t b = attrib.colors[3 * id_vertice.vertex_index + 2];
+                originalColors.push_back(
+                    vector<float>({
+                           175,
+                           175,
+                           175
+                        })
+                );
 
             }
 
+            // Se generan los índices de los triángulos:
+            size_t number_of_triangles = triangles.size();
+
+            original_indices.resize(original_indices.size() + (number_of_triangles * 3));
+
+            Index_Buffer::iterator indices_iterator = original_indices.begin();
+
+            for (size_t triangle_index = 0; triangle_index < number_of_triangles; triangle_index++)
+            {
+                *indices_iterator++ = triangles[triangle_index][0];
+                *indices_iterator++ = triangles[triangle_index][1];
+                *indices_iterator++ = triangles[triangle_index][2];
+            }
+
+            //Añadimos las distintas meshes con los vertices
+            meshList.push_back(new Mesh(original_indices));
+
+            // Se cargan en un búffer los datos del array:
+
+            size_t lastVertex = original_vertices.size();
+            size_t number_of_vertices = original_vertices.size() + vertices_vector.size();
+
+            original_vertices.resize(number_of_vertices);
+
+            for (size_t index = lastVertex; index < number_of_vertices; index++)
+            {
+                original_vertices[index] = Vertex({
+                     vertices_vector[index].at(0),
+                     vertices_vector[index].at(1),
+                     vertices_vector[index].at(2),
+                     vertices_vector[index].at(3)
+                    });
+            }
+
+            transformed_vertices.resize(number_of_vertices);
+            display_vertices.resize(number_of_vertices);
+
+            // Se definen los datos de color de los vértices:
+
+            lastVertex = original_colors.size();
+            size_t number_of_colors = original_colors.size() + originalColors.size();
+
+            assert(number_of_colors == number_of_vertices);             // Debe haber el mismo número
+                                                                        // de colores que de vértices
+            original_colors.resize(number_of_colors);
+
+            for (size_t index = lastVertex; index < number_of_colors; index++)
+            {
+                original_colors[index].set((int)originalColors[index][0], (int)originalColors[index][1], (int)originalColors[index][2]);
+            }
+
+
         }
-
-
-        
     }
-
-  
-    int ** vertices = new int *[vertices_vector.size()];
-
-    for (int i = 0; i < vertices_vector.size(); ++i)
-    {
-        vertices[i] = new int[4];
-        vertices[i][0] = vertices_vector.at(i).at(0);
-        vertices[i][1] = vertices_vector.at(i).at(1);
-        vertices[i][2] = vertices_vector.at(i).at(2);
-        vertices[i][3] = vertices_vector.at(i).at(3);
-    }
-       
-
-    //static const int vertices[][4] =
-    //{
-    //    { -4, -4, +4, 1 },      // 0   // vértices del cubo
-    //    { +4, -4, +4, 1 },      // 1
-    //    { +4, +4, +4, 1 },      // 2
-    //    { -4, +4, +4, 1 },      // 3
-    //    { -4, -4, -4, 1 },      // 4
-    //    { +4, -4, -4, 1 },      // 5
-    //    { +4, +4, -4, 1 },      // 6
-    //    { -4, +4, -4, 1 },      // 7
-    //    { -5, -5,  0, 1 },      // 8    // vértices de los polígonos cortantes
-    //    { +5, -5,  0, 1 },      // 9
-    //    { +5, +5,  0, 1 },      // 10
-    //    { -5, +5,  0, 1 },      // 11
-    //    {  0, -5, +5, 1 },      // 12
-    //    {  0, +5, +5, 1 },      // 13
-    //    {  0, +5, -5, 1 },      // 15
-    //    {  0, -5, -5, 1 },      // 14
-    //};
-
-    // Se cargan en un búffer los datos del array:
-
-    size_t number_of_vertices = sizeof(vertices) / sizeof(int) / 4;
-
-    original_vertices.resize(number_of_vertices);
-
-    for (size_t index = 0; index < number_of_vertices; index++)
-    {
-        original_vertices[index] = Vertex(vertices[index]);
-    }
-
-  
-    transformed_vertices.resize(number_of_vertices);
-    display_vertices.resize(number_of_vertices);
-
-    // Se definen los datos de color de los vértices:
-
-    static const int colors[][3] =
-    {
-        { 255,   0,   0 },      // 0
-        {   0, 255,   0 },      // 1
-        {   0,   0, 255 },      // 2
-        {   0,   0, 255 },      // 3
-        { 255, 255,   0 },      // 4
-        { 255,   0, 255 },      // 5
-        { 255,   0,   0 },      // 6
-        { 255,   0,   0 },      // 7
-        { 175, 175, 175 },      // 8
-        { 175, 175, 175 },      // 9
-        { 175, 175, 175 },      // 10
-        { 175, 175, 175 },      // 11
-        { 225, 225, 225 },      // 12
-        { 225, 225, 225 },      // 13
-        { 225, 225, 225 },      // 14
-        { 225, 225, 225 },      // 15
-    };
-
-    size_t number_of_colors = sizeof(colors) / sizeof(int) / 3;
-
-    assert(number_of_colors == number_of_vertices);             // Debe haber el mismo número
-                                                                // de colores que de vértices
-    original_colors.resize(number_of_colors);
-
-    for (size_t index = 0; index < number_of_colors; index++)
-    {
-        original_colors[index].set(colors[index][0], colors[index][1], colors[index][2]);
-    }
-
-    // Se generan los índices de los triángulos:
-
-    static const int triangles[][3] =
-    {
-        {  0,  1,  2 },         // cube front
-        {  0,  2,  3 },
-        {  4,  0,  3 },         // cube left
-        {  4,  3,  7 },
-        {  5,  4,  7 },         // cube back
-        {  5,  7,  6 },
-        {  1,  5,  6 },         // cube right
-        {  1,  6,  2 },
-        {  3,  2,  6 },         // cube top
-        {  3,  6,  7 },
-        {  0,  4,  5 },         // cube bottom
-        {  0,  5,  1 },
-        {  8,  9, 10 },         // middle frontface
-        {  8, 10, 11 },
-        { 10,  9,  8 },         // middle backface
-        { 11, 10,  8 },
-        { 12, 13, 14 },         // middle leftface
-        { 12, 14, 15 },
-        { 14, 13, 12 },         // middle rightface
-        { 15, 14, 12 },
-    };
-
-    size_t number_of_triangles = sizeof(triangles) / sizeof(int) / 3;
-
-    original_indices.resize(number_of_triangles * 3);
-
-    Index_Buffer::iterator indices_iterator = original_indices.begin();   
-
-    for (size_t triangle_index = 0; triangle_index < number_of_triangles; triangle_index++)
-    {
-        *indices_iterator++ = triangles[triangle_index][0];
-        *indices_iterator++ = triangles[triangle_index][1];
-        *indices_iterator++ = triangles[triangle_index][2];
-    }
-
-    //Añadimos las distintas meshes con los vertices
-    meshList.push_back(new Mesh(original_indices));
-
 }
 
 RenderModel::Model3D::~Model3D()
@@ -208,60 +147,75 @@ RenderModel::Model3D::~Model3D()
 
 void RenderModel::Model3D::loadObj(const char* path)
 {
-    vector< vector<float> > originalCoordinates;
-    vector< vector<float> > originalColors;
-    vector< vector<int  > > triangles;
+    //vector< vector<float> > originalCoordinates;
+    //vector< vector<float> > originalColors;
+    //vector< vector<int  > > triangles;
+    //vector< vector<int  > > meshIndices;
 
-    tinyobj::attrib_t attrib;
-    std::vector<tinyobj::shape_t> shapes;
-    std::vector<tinyobj::material_t> materials;
+    //tinyobj::attrib_t attrib;
+    //std::vector<tinyobj::shape_t> shapes;
+    //std::vector<tinyobj::material_t> materials;
 
-    std::string warn;
-    std::string err;
+    //std::string warn;
+    //std::string err;
 
-    bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path);
+    //bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path);
 
 
-    if (ret) //Colocamos los datos necesarios
-    {
+    //if (ret) //Colocamos los datos necesarios
+    //{
 
-        for (size_t i = 0; i < attrib.GetVertices().size(); i += 3)
-        {
-            originalCoordinates.push_back(
-                vector<float>({
-                    attrib.vertices[i],
-                    attrib.vertices[i + 1],
-                    attrib.vertices[i + 2],
-                }));
-            
-            originalColors.push_back(
-                 vector<float>({
-                    attrib.colors[i],
-                    attrib.colors[i + 1],
-                    attrib.colors[i + 2],
-                }));
-        }
+    //    for (size_t i = 0; i < attrib.GetVertices().size(); i += 3)
+    //    {
+    //        originalCoordinates.push_back(
+    //            vector<float>({
+    //                attrib.vertices[i],
+    //                attrib.vertices[i + 1],
+    //                attrib.vertices[i + 2],
+    //                }));
 
-        for (auto mesh : shapes)
-        {
-            vector<int> index;
-            
-            for (int i = 0; i < mesh.mesh.indices.size(); i += 3)
-            {
-                triangles.push_back(
-                 vector<int>({
-                    mesh.mesh.indices.at(i).vertex_index,
-                    mesh.mesh.indices.at(i + 1).vertex_index,
-                    mesh.mesh.indices.at(i + 2).vertex_index
-                }));
+    //        originalColors.push_back(
+    //            vector<float>({
+    //               attrib.colors[i],
+    //               attrib.colors[i + 1],
+    //               attrib.colors[i + 2],
+    //                }));
+    //    }
 
-                
-            }
-            
-          
-        }
+    //    for (auto mesh : shapes)
+    //    {
 
-    }
+    //        for (int i = 0; i < mesh.mesh.indices.size(); i += 3)
+    //        {
+    //            triangles.push_back(
+    //                vector<int>({
+    //                   mesh.mesh.indices.at(i).vertex_index,
+    //                   mesh.mesh.indices.at(i + 1).vertex_index,
+    //                   mesh.mesh.indices.at(i + 2).vertex_index
+    //                    }));
+
+    //            meshIndices.push_back(
+    //                vector<int>({
+    //                   mesh.mesh.indices.at(i).vertex_index
+    //                    }));
+
+    //            meshIndices.push_back(
+    //                vector<int>({
+    //                   mesh.mesh.indices.at(i + 1).vertex_index
+    //                    }));
+
+    //            meshIndices.push_back(
+    //                vector<int>({
+    //                   mesh.mesh.indices.at(i + 2).vertex_index
+    //                    }));
+
+
+    //        }
+
+
+    //    }
+
+    //}
 }
 
 void RenderModel::Model3D::update(float t, View& view)

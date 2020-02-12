@@ -30,7 +30,6 @@ namespace RenderModel {
 
         Index_Buffer               meshIndices;
         shared_ptr<Material>       material;
-        Model3D *                  model;
 
     public:
 
