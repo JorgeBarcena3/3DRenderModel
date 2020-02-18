@@ -2,7 +2,11 @@
 
 RenderModel::Camera::Camera(float near, float far, float fov, float aspectRatio )
 {
-    projection = new Projection3f(near, far, fov, aspectRatio);
+    projection = std::shared_ptr<Projection3f>( new Projection3f(near, far, fov, aspectRatio) );
+}
+
+RenderModel::Camera::~Camera()
+{
 }
 
 void RenderModel::Camera::update(float t)

@@ -47,6 +47,8 @@ namespace RenderModel {
         */
         friend class Mesh;
 
+    private:
+
         /*
         * Escala del modelo
         */
@@ -66,8 +68,6 @@ namespace RenderModel {
         * Translacion del modelo
         */
         Translation3f translation;
-
-    private:
 
         /*
         * Vertices originales del modelo
@@ -92,21 +92,34 @@ namespace RenderModel {
         /*
         * Lista de mesh que componen el modelo
         */
-        vector< Mesh * > meshList;
+        vector< shared_ptr< Mesh > > meshList;
 
         /*
         * Referencia a la vista a la que pertenece el modelo
         */
-        View  *     view;
+        shared_ptr< View >     view;
+
+        /*
+        * Padre de la del modelo 3D
+        */
+        shared_ptr<Model3D>   padre;
+
+    public:
+
+        /*
+        * Hijos que contiene el modelo 3D
+        */
+        vector<shared_ptr<Model3D>>   hijos;
 
 
     public:
 
-        Model3D(const char* path, float scale, Point3f rotation, Point3f position, View& view);
+        Model3D(const char* path, float scale, Point3f rotation, Point3f position, shared_ptr<View> view, shared_ptr<Model3D> padre);
         ~Model3D();
 
         void loadObj(const char* path);
         void applyTransformation();
+        void addChild(shared_ptr<Model3D> child);
         void update(float t, View& view);
         void paint(View& view);  
         

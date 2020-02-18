@@ -14,17 +14,16 @@
 
     namespace RenderModel
     {
-
         class Color_Buffer
         {
         protected:
 
-            size_t width;
-            size_t height;
+            int width;
+            int height;
 
         public:
 
-            Color_Buffer(size_t width, size_t height)
+            Color_Buffer(int width, int height)
             :
                 width (width ),
                 height(height)
@@ -33,12 +32,12 @@
 
         public:
 
-            size_t get_width () const
+            int get_width () const
             {
                 return (width);
             }
 
-            size_t get_height () const
+            int get_height () const
             {
                 return (height);
             }
@@ -53,7 +52,7 @@
             virtual int  bits_per_color () const = 0;
             virtual void set_color      (int r, int  g, int b) = 0;
             virtual void set_pixel      (int x, int  y) = 0;
-            virtual void set_pixel      (size_t offset) = 0;
+            virtual void set_pixel      (int offset) = 0;
             virtual void gl_draw_pixels (int raster_x, int raster_y) const = 0;
 
         };

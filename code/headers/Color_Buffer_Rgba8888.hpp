@@ -65,7 +65,7 @@
 
         public:
 
-            Color_Buffer_Rgba8888(size_t width, size_t height)
+            Color_Buffer_Rgba8888(int width, int height)
             :
                 Color_Buffer(width,  height),
                 buffer      (width * height)
@@ -89,7 +89,7 @@
                 return (sizeof(Color) * 8);
             }
 
-            size_t size () const
+            int size () const
             {
                 return (buffer.size ());
             }
@@ -109,7 +109,7 @@
                 color = new_color;
             }
 
-            void set_pixel (size_t offset)
+            void set_pixel (int offset)
             {
                 buffer[offset] = color;
             }

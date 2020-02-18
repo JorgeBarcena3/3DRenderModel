@@ -99,7 +99,7 @@
 
         private:
 
-            template< typename VALUE_TYPE, size_t SHIFT >
+            template< typename VALUE_TYPE, int SHIFT >
             void interpolate (int   * cache, int   v0, int   v1, int y_min, int y_max);
 
         };
@@ -382,7 +382,7 @@
         }
 
         template< class  COLOR_BUFFER_TYPE >
-        template< typename VALUE_TYPE, size_t SHIFT >
+        template< typename VALUE_TYPE, int SHIFT >
         void Rasterizer< COLOR_BUFFER_TYPE >::interpolate (int * cache, int v0, int v1, int y_min, int y_max)
         {
             if (y_max > y_min)

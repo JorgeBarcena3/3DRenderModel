@@ -14,11 +14,18 @@
 using namespace toolkit;
 
 
-RenderModel::Model3D::Model3D(const char* _path, float _scale, Point3f _rotation, Point3f _position, View& _view)
+RenderModel::Model3D::Model3D(const char* _path, float _scale, Point3f _rotation, Point3f _position, shared_ptr<View> _view, shared_ptr<Model3D> _padre)
 {
     loadObj(_path);
 
-    view = &_view;
+    padre = _padre;
+
+    if (padre != nullptr)
+    {
+        padre->addChild(shared_ptr<Model3D>(this));
+    }
+
+    view = _view;
 
     scale = Scaling3f(_scale);
 
@@ -35,6 +42,7 @@ RenderModel::Model3D::Model3D(const char* _path, float _scale, Point3f _rotation
 
 RenderModel::Model3D::~Model3D()
 {
+   
 }
 
 void RenderModel::Model3D::loadObj(const char* path)
@@ -58,14 +66,14 @@ void RenderModel::Model3D::loadObj(const char* path)
 
         // En cada mesh añadimos los indices de sus vertices
         // Tambien guardamos los triangulos que forman sus caras
-        for (size_t s = 0; s < shapes.size(); s++)
+        for (int s = 0; s < shapes.size(); s++)
         {
             vector< int > meshIndices;
 
             // Offset de los indices de los trianguloas
-            size_t triangleIndiceOffset = 0;
+            int triangleIndiceOffset = 0;
 
-            for (size_t f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++)
+            for (int f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++)
             {
 
                 int facesPoligon = shapes[s].mesh.num_face_vertices[f];
@@ -78,14 +86,14 @@ void RenderModel::Model3D::loadObj(const char* path)
             }
 
             // Se generan los índices de los triángulos
-            size_t number_of_triangles = triangles.size();
+            int number_of_triangles = triangles.size();
 
             Index_Buffer meshVerices(number_of_triangles * 3);
 
 
             Index_Buffer::iterator mesh_indices_iterator = meshVerices.begin();
 
-            for (size_t triangle_index = 0; triangle_index < number_of_triangles; triangle_index++)
+            for (int triangle_index = 0; triangle_index < number_of_triangles; triangle_index++)
             {
                 *mesh_indices_iterator++ = triangles[triangle_index][0];
                 *mesh_indices_iterator++ = triangles[triangle_index][1];
@@ -93,7 +101,7 @@ void RenderModel::Model3D::loadObj(const char* path)
             }
 
             //Añadimos las distintas meshes con los vertices
-            meshList.push_back(new Mesh(meshVerices));
+            meshList.push_back(shared_ptr<Mesh> (new Mesh(meshVerices)));
 
         }
 
@@ -103,7 +111,7 @@ void RenderModel::Model3D::loadObj(const char* path)
         int verticesoffset = 0;
         int colorOffset = 0;
 
-        for (size_t i = 0; i < numeroVertices; i++)
+        for (int i = 0; i < numeroVertices; i++)
         {
             vertices_vector.push_back(
                 vector<float>({
@@ -126,12 +134,12 @@ void RenderModel::Model3D::loadObj(const char* path)
 
         // Se cargan en un búffer los datos del array:
 
-        size_t lastVertex = original_vertices.size();
-        size_t number_of_vertices = original_vertices.size() + vertices_vector.size();
+        int lastVertex = original_vertices.size();
+        int number_of_vertices = original_vertices.size() + vertices_vector.size();
 
         original_vertices.resize(number_of_vertices);
 
-        for (size_t index = lastVertex; index < number_of_vertices; index++)
+        for (int index = lastVertex; index < number_of_vertices; index++)
         {
             original_vertices[index] = Vertex({
                  vertices_vector[index].at(0),
@@ -147,13 +155,13 @@ void RenderModel::Model3D::loadObj(const char* path)
         // Se definen los datos de color de los vértices:
 
         lastVertex = original_colors.size();
-        size_t number_of_colors = original_colors.size() + originalColors.size();
+        int number_of_colors = original_colors.size() + originalColors.size();
 
         assert(number_of_colors == number_of_vertices);             // Debe haber el mismo número
                                                                     // de colores que de vértices
         original_colors.resize(number_of_colors);
 
-        for (size_t index = lastVertex; index < number_of_colors; index++)
+        for (int index = lastVertex; index < number_of_colors; index++)
         {
             original_colors[index].set((int)originalColors[index][0], (int)originalColors[index][1], (int)originalColors[index][2]);
         }
@@ -173,7 +181,7 @@ void RenderModel::Model3D::applyTransformation()
 
     // Se transforman todos los vértices usando la matriz de transformación resultante:
 
-    for (size_t index = 0, number_of_vertices = original_vertices.size(); index < number_of_vertices; index++)
+    for (int index = 0, number_of_vertices = original_vertices.size(); index < number_of_vertices; index++)
     {
         // Se multiplican todos los vértices originales con la matriz de transformación y
         // se guarda el resultado en otro vertex buffer:
@@ -190,6 +198,11 @@ void RenderModel::Model3D::applyTransformation()
         vertex[2] *= divisor;
         vertex[3] = 1.f;
     }
+}
+
+void RenderModel::Model3D::addChild(shared_ptr<Model3D> child)
+{
+    hijos.push_back(child);
 }
 
 void RenderModel::Model3D::update(float t, View& view)

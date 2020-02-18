@@ -17,7 +17,7 @@ using namespace toolkit;
 namespace RenderModel
 {
 
-    View::View(size_t width, size_t height, Camera _camera)
+    View::View(int width, int height, Camera _camera)
         :
         width(width),
         height(height),
@@ -37,6 +37,7 @@ namespace RenderModel
     {
         mainCamera.update(t);
 
+        //Pasada por los padres de todos las entidades
         for (auto model : models3D)
         {
             model.second->update(t, *this);
@@ -58,6 +59,27 @@ namespace RenderModel
         // Se copia el framebúffer oculto en el framebúffer de la ventana:
         rasterizer.get_color_buffer().gl_draw_pixels(0, 0);
 
+    }
+
+    bool View::cutout(const Point4i* const vertices, int* indices_begin, int* indices_end)
+    {
+        for (int* i = indices_begin; i != indices_end; i++)
+        {
+            int px0 = (vertices[*i])[0];
+            int py0 = (vertices[*i])[1];
+
+            if (
+                (px0 <= 0 || px0 >= width)
+                || (py0 <= 0 || py0 >= width)
+
+                )
+            {
+                //No lo renderizamos
+                return false;
+            }
+        }
+
+        return true;
     }
 
 

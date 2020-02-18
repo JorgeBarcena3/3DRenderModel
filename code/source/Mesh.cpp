@@ -38,12 +38,18 @@ void RenderModel::Mesh::render(View& view, Model3D & model)
     {
         if (is_frontface(model.transformed_vertices.data(), indices))
         {
-            // Se establece el color del polígono a partir del color de su primer vértice:
-            view.rasterizer.set_color(model.original_colors[*indices]);
+            // AÑadimos el recorte
+            if (view.cutout(model.display_vertices.data(), indices, indices + 3))
+            {
+                // Se establece el color del polígono a partir del color de su primer vértice:
+                view.rasterizer.set_color(model.original_colors[*indices]);
 
-            // Se rellena el polígono:
-            view.rasterizer.fill_convex_polygon_z_buffer(model.display_vertices.data(), indices, indices + 3);
-        }
+                // Se rellena el polígono:
+                view.rasterizer.fill_convex_polygon_z_buffer(model.display_vertices.data(), indices, indices + 3);
+
+            }
+
+}
 
     }
 
@@ -60,3 +66,4 @@ bool RenderModel::Mesh::is_frontface(const Vertex* const projected_vertices, con
 
     return ((v1[0] - v0[0]) * (v2[1] - v0[1]) - (v2[0] - v0[0]) * (v1[1] - v0[1]) > 0.f);
 }
+

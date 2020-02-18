@@ -40,8 +40,8 @@ namespace RenderModel
         typedef map<string, shared_ptr<Model3D>>  Models3D;
 
 
-        size_t width;
-        size_t height;
+        int width;
+        int height;
 
         Color_Buffer               Color_buffer;
         Rasterizer< Color_Buffer > rasterizer;
@@ -51,11 +51,13 @@ namespace RenderModel
 
     public:
 
-        View(size_t width, size_t height, Camera camera);
+        View(int width, int height, Camera camera);
 
         void addModel(string name, Model3D model);
         void update(float t);
         void paint();
+
+        bool cutout(const Point4i* const vertices, int* indices_begin, int* indices_end);
 
     };
 

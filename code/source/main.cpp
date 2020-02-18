@@ -17,8 +17,8 @@
 using namespace sf;
 using namespace RenderModel;
 
-static const size_t window_width  = 800;
-static const size_t window_height = 600;
+static const int window_width  = 800;
+static const int window_height = 600;
 
 int main ()
 {
@@ -28,7 +28,9 @@ int main ()
 
     Camera camera  (5 ,15, 20, float(window_width) / float(window_height));
     View   view  (window_width, window_height, camera);
-    view.addModel("Cubo", Model3D("..//..//assets//models//cube.obj", 0.2f, Point3f({ 0,0,0 }), Point3f({ 0, 0, -10 }), view));
+
+    view.addModel("CuboPadre", Model3D("..//..//assets//models//cube.obj", 0.1f, Point3f({ 0,0,0 }), Point3f({ 0,  0, -10 }), shared_ptr<View>(new View(view)), shared_ptr<Model3D>( nullptr)));
+    view.addModel("CuboHijo",  Model3D("..//..//assets//models//cube.obj", 0.1f, Point3f({ 0,0,0 }), Point3f({ 0, -1, -10 }), shared_ptr<View>(new View(view)), view.models3D["CuboPadre"]));
 
     // Initialization:
 

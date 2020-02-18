@@ -13,11 +13,13 @@
 #define CAMERA_HEADER
 
 #include <Projection.hpp>
+#include <memory>
 
 
 namespace RenderModel
 {  
 
+    using toolkit::Projection3f;
     using toolkit::Projection3f;
 
 
@@ -32,7 +34,7 @@ namespace RenderModel
         /*
         * Matriz de proyeccion
         */
-        Projection3f * projection;
+        std::shared_ptr<Projection3f> projection;
 
     public:
 
@@ -40,6 +42,11 @@ namespace RenderModel
         * Constructor de la camara
         */
         Camera(float near, float far, float fov, float aspectRatio);
+
+        /*
+        * Destructor de la clase camara
+        */
+        ~Camera();
 
         /*
         * Update de la camara
