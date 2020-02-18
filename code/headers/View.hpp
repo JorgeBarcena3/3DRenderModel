@@ -19,6 +19,7 @@
 #include "Model3D.hpp"
 #include "Color_Buffer_Rgb565.hpp"
 #include "Color_Buffer_Rgba8888.hpp"
+#include "Camera.hpp"
 
 
 namespace RenderModel
@@ -45,11 +46,12 @@ namespace RenderModel
         Color_Buffer               Color_buffer;
         Rasterizer< Color_Buffer > rasterizer;
         Models3D                   models3D;
+        Camera                     mainCamera;
 
 
     public:
 
-        View(size_t width, size_t height);
+        View(size_t width, size_t height, Camera camera);
 
         void addModel(string name, Model3D model);
         void update(float t);

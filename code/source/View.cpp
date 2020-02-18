@@ -17,12 +17,13 @@ using namespace toolkit;
 namespace RenderModel
 {
 
-    View::View(size_t width, size_t height)
+    View::View(size_t width, size_t height, Camera _camera)
         :
         width(width),
         height(height),
         Color_buffer(width, height),
-        rasterizer(Color_buffer)
+        rasterizer(Color_buffer),
+        mainCamera(_camera)
     {
 
     }
@@ -34,6 +35,7 @@ namespace RenderModel
 
     void View::update(float t)
     {
+        mainCamera.update(t);
 
         for (auto model : models3D)
         {

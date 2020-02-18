@@ -7,18 +7,29 @@
 #include "Point.hpp"
 #include "Color_Buffer_Rgb565.hpp"
 #include "Color_Buffer_Rgba8888.hpp"
+#include <Scaling.hpp>
+#include <Rotation.hpp>
+#include <Projection.hpp>
+#include <Translation.hpp>
 
 namespace RenderModel {
 
     using std::shared_ptr;
     using std::unique_ptr;
     using std::vector;
-    using toolkit::Point4i;
     using toolkit::Point4f;
+    using toolkit::Point4i;
+    using toolkit::Point3f;
+    using toolkit::Scaling3f;
+    using toolkit::Rotation3f;
+    using toolkit::Translation3f;
     class View;
     class Mesh;
     class View;
 
+    /*
+    * Clase que va a manejar un modelo 3D
+    */
     class Model3D
     {
 
@@ -31,23 +42,71 @@ namespace RenderModel {
         typedef vector< int    >      Index_Buffer;
         typedef vector< Color  >      Vertex_Colors;
 
-    public:
+        /*
+        * La clase Mesh puede acceder a las variables privadas del modelo3D
+        */
+        friend class Mesh;
 
+        /*
+        * Escala del modelo
+        */
+        Scaling3f     scale;
+
+        /*
+        * Rotacion en X del modelo
+        */
+        Rotation3f    rotation_x;
+
+        /*
+        * Rotacion en Y del modelo
+        */
+        Rotation3f    rotation_y;
+
+        /*
+        * Translacion del modelo
+        */
+        Translation3f translation;
+
+    private:
+
+        /*
+        * Vertices originales del modelo
+        */
         Vertex_Buffer      original_vertices;
-        Index_Buffer       original_indices;
+
+        /*
+        * Colores originales
+        */
         Vertex_Colors      original_colors;
+
+        /*
+        * Vertices despues de aplicarles X transformacion
+        */
         Vertex_Buffer      transformed_vertices;
+
+        /*
+        * Vertices de la pantalla
+        */
         vector< Point4i  > display_vertices;
 
+        /*
+        * Lista de mesh que componen el modelo
+        */
         vector< Mesh * > meshList;
+
+        /*
+        * Referencia a la vista a la que pertenece el modelo
+        */
+        View  *     view;
 
 
     public:
 
-        Model3D(const char* path);
+        Model3D(const char* path, float scale, Point3f rotation, Point3f position, View& view);
         ~Model3D();
 
         void loadObj(const char* path);
+        void applyTransformation();
         void update(float t, View& view);
         void paint(View& view);  
         

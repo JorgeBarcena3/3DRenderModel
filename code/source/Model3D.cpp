@@ -5,22 +5,40 @@
 #include <cmath>
 #include <cassert>
 #include "..\headers\Model3D.hpp"
+#include "..\headers\Camera.hpp"
 #include <Vector.hpp>
-#include <Scaling.hpp>
-#include <Rotation.hpp>
-#include <Projection.hpp>
-#include <Translation.hpp>
+
 #include "../headers/View.hpp"
 #include "../headers/Mesh.h"
 
 using namespace toolkit;
 
 
-RenderModel::Model3D::Model3D(const char* path)
+RenderModel::Model3D::Model3D(const char* _path, float _scale, Point3f _rotation, Point3f _position, View& _view)
 {
+    loadObj(_path);
 
-    //loadObj(path);
+    view = &_view;
 
+    scale = Scaling3f(_scale);
+
+    rotation_x.set< Rotation3f::AROUND_THE_X_AXIS >(_rotation[0]);
+
+    rotation_y.set< Rotation3f::AROUND_THE_Y_AXIS >(_rotation[1]);
+
+    translation = Translation3f(_position[0], _position[1], _position[2]);
+
+    applyTransformation();
+   
+}
+
+
+RenderModel::Model3D::~Model3D()
+{
+}
+
+void RenderModel::Model3D::loadObj(const char* path)
+{
     tinyobj::attrib_t attrib;
     std::vector<tinyobj::shape_t> shapes;
     std::vector<tinyobj::material_t> materials;
@@ -38,209 +56,120 @@ RenderModel::Model3D::Model3D(const char* path)
         vector< vector<int  > > triangles;
 
 
-        // Loop over shapes
+        // En cada mesh añadimos los indices de sus vertices
+        // Tambien guardamos los triangulos que forman sus caras
         for (size_t s = 0; s < shapes.size(); s++)
         {
-            vector< int  > meshIndices;
+            vector< int > meshIndices;
 
-            // Loop over faces(polygon)
-            size_t index_offset = 0;
+            // Offset de los indices de los trianguloas
+            size_t triangleIndiceOffset = 0;
+
             for (size_t f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++)
             {
 
                 int facesPoligon = shapes[s].mesh.num_face_vertices[f];
 
                 triangles.push_back(vector<int>(facesPoligon));
-                vertices_vector.push_back(vector<float>(4));
-
-
-                // access to vertex
-                tinyobj::index_t id_vertice = shapes[s].mesh.indices[index_offset + vertices];
-                meshIndices.push_back(id_vertice.vertex_index);
-
-                triangles[triangles.size() - 1][vertices] = (id_vertice.vertex_index);
-
-                tinyobj::real_t vx = attrib.vertices[3 * id_vertice.vertex_index + vertices];
-                tinyobj::real_t vy = attrib.vertices[3 * id_vertice.vertex_index + 1];
-                tinyobj::real_t vz = attrib.vertices[3 * id_vertice.vertex_index + 2];
-                vertices_vector.push_back(
-                    vector<float>({
-                           vx,
-                           vy,
-                           vz,
-                           1.f
-                        })
-                );
-
-                tinyobj::real_t r = attrib.colors[3 * id_vertice.vertex_index + 0];
-                tinyobj::real_t g = attrib.colors[3 * id_vertice.vertex_index + 1];
-                tinyobj::real_t b = attrib.colors[3 * id_vertice.vertex_index + 2];
-                originalColors.push_back(
-                    vector<float>({
-                           175,
-                           175,
-                           175
-                        })
-                );
+                triangles[triangles.size() - 1][0] = (shapes[s].mesh.indices[triangleIndiceOffset++].vertex_index);
+                triangles[triangles.size() - 1][1] = (shapes[s].mesh.indices[triangleIndiceOffset++].vertex_index);
+                triangles[triangles.size() - 1][2] = (shapes[s].mesh.indices[triangleIndiceOffset++].vertex_index);
 
             }
 
-            // Se generan los índices de los triángulos:
+            // Se generan los índices de los triángulos
             size_t number_of_triangles = triangles.size();
 
-            original_indices.resize(original_indices.size() + (number_of_triangles * 3));
+            Index_Buffer meshVerices(number_of_triangles * 3);
 
-            Index_Buffer::iterator indices_iterator = original_indices.begin();
+
+            Index_Buffer::iterator mesh_indices_iterator = meshVerices.begin();
 
             for (size_t triangle_index = 0; triangle_index < number_of_triangles; triangle_index++)
             {
-                *indices_iterator++ = triangles[triangle_index][0];
-                *indices_iterator++ = triangles[triangle_index][1];
-                *indices_iterator++ = triangles[triangle_index][2];
+                *mesh_indices_iterator++ = triangles[triangle_index][0];
+                *mesh_indices_iterator++ = triangles[triangle_index][1];
+                *mesh_indices_iterator++ = triangles[triangle_index][2];
             }
 
             //Añadimos las distintas meshes con los vertices
-            meshList.push_back(new Mesh(original_indices));
-
-            // Se cargan en un búffer los datos del array:
-
-            size_t lastVertex = original_vertices.size();
-            size_t number_of_vertices = original_vertices.size() + vertices_vector.size();
-
-            original_vertices.resize(number_of_vertices);
-
-            for (size_t index = lastVertex; index < number_of_vertices; index++)
-            {
-                original_vertices[index] = Vertex({
-                     vertices_vector[index].at(0),
-                     vertices_vector[index].at(1),
-                     vertices_vector[index].at(2),
-                     vertices_vector[index].at(3)
-                    });
-            }
-
-            transformed_vertices.resize(number_of_vertices);
-            display_vertices.resize(number_of_vertices);
-
-            // Se definen los datos de color de los vértices:
-
-            lastVertex = original_colors.size();
-            size_t number_of_colors = original_colors.size() + originalColors.size();
-
-            assert(number_of_colors == number_of_vertices);             // Debe haber el mismo número
-                                                                        // de colores que de vértices
-            original_colors.resize(number_of_colors);
-
-            for (size_t index = lastVertex; index < number_of_colors; index++)
-            {
-                original_colors[index].set((int)originalColors[index][0], (int)originalColors[index][1], (int)originalColors[index][2]);
-            }
-
+            meshList.push_back(new Mesh(meshVerices));
 
         }
+
+        // Vertices, colores, normales... del modelo 3D
+
+        int numeroVertices = attrib.GetVertices().size() / 3;
+        int verticesoffset = 0;
+        int colorOffset = 0;
+
+        for (size_t i = 0; i < numeroVertices; i++)
+        {
+            vertices_vector.push_back(
+                vector<float>({
+                       attrib.vertices[verticesoffset++],
+                       attrib.vertices[verticesoffset++],
+                       attrib.vertices[verticesoffset++],
+                       1.f
+                    }));
+
+
+            originalColors.push_back(
+                vector<float>({
+                      175, // attrib.colors[colorOffset++],
+                      175, // attrib.colors[colorOffset++],
+                      175 // attrib.colors[colorOffset++],
+                    })
+            );
+
+        }
+
+        // Se cargan en un búffer los datos del array:
+
+        size_t lastVertex = original_vertices.size();
+        size_t number_of_vertices = original_vertices.size() + vertices_vector.size();
+
+        original_vertices.resize(number_of_vertices);
+
+        for (size_t index = lastVertex; index < number_of_vertices; index++)
+        {
+            original_vertices[index] = Vertex({
+                 vertices_vector[index].at(0),
+                 vertices_vector[index].at(1),
+                 vertices_vector[index].at(2),
+                 vertices_vector[index].at(3)
+                });
+        }
+
+        transformed_vertices.resize(number_of_vertices);
+        display_vertices.resize(number_of_vertices);
+
+        // Se definen los datos de color de los vértices:
+
+        lastVertex = original_colors.size();
+        size_t number_of_colors = original_colors.size() + originalColors.size();
+
+        assert(number_of_colors == number_of_vertices);             // Debe haber el mismo número
+                                                                    // de colores que de vértices
+        original_colors.resize(number_of_colors);
+
+        for (size_t index = lastVertex; index < number_of_colors; index++)
+        {
+            original_colors[index].set((int)originalColors[index][0], (int)originalColors[index][1], (int)originalColors[index][2]);
+        }
+
+
     }
 }
 
-RenderModel::Model3D::~Model3D()
-{
-}
-
-void RenderModel::Model3D::loadObj(const char* path)
-{
-    //vector< vector<float> > originalCoordinates;
-    //vector< vector<float> > originalColors;
-    //vector< vector<int  > > triangles;
-    //vector< vector<int  > > meshIndices;
-
-    //tinyobj::attrib_t attrib;
-    //std::vector<tinyobj::shape_t> shapes;
-    //std::vector<tinyobj::material_t> materials;
-
-    //std::string warn;
-    //std::string err;
-
-    //bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path);
-
-
-    //if (ret) //Colocamos los datos necesarios
-    //{
-
-    //    for (size_t i = 0; i < attrib.GetVertices().size(); i += 3)
-    //    {
-    //        originalCoordinates.push_back(
-    //            vector<float>({
-    //                attrib.vertices[i],
-    //                attrib.vertices[i + 1],
-    //                attrib.vertices[i + 2],
-    //                }));
-
-    //        originalColors.push_back(
-    //            vector<float>({
-    //               attrib.colors[i],
-    //               attrib.colors[i + 1],
-    //               attrib.colors[i + 2],
-    //                }));
-    //    }
-
-    //    for (auto mesh : shapes)
-    //    {
-
-    //        for (int i = 0; i < mesh.mesh.indices.size(); i += 3)
-    //        {
-    //            triangles.push_back(
-    //                vector<int>({
-    //                   mesh.mesh.indices.at(i).vertex_index,
-    //                   mesh.mesh.indices.at(i + 1).vertex_index,
-    //                   mesh.mesh.indices.at(i + 2).vertex_index
-    //                    }));
-
-    //            meshIndices.push_back(
-    //                vector<int>({
-    //                   mesh.mesh.indices.at(i).vertex_index
-    //                    }));
-
-    //            meshIndices.push_back(
-    //                vector<int>({
-    //                   mesh.mesh.indices.at(i + 1).vertex_index
-    //                    }));
-
-    //            meshIndices.push_back(
-    //                vector<int>({
-    //                   mesh.mesh.indices.at(i + 2).vertex_index
-    //                    }));
-
-
-    //        }
-
-
-    //    }
-
-    //}
-}
-
-void RenderModel::Model3D::update(float t, View& view)
+void RenderModel::Model3D::applyTransformation()
 {
 
-    //// Se actualizan los parámetros de transformatión (sólo se modifica el ángulo):
-
-    static float angle = 0.f;
-
-    angle += 0.025f;
-
-    // Se crean las matrices de transformación:
-
-    Scaling3f     scaling(0.2f);
-    Rotation3f    rotation_x;
-    Rotation3f    rotation_y;
-    Translation3f translation(0, 0, -10);
-    Projection3f  projection(5, 15, 20, float(view.width) / float(view.height));
-
-    rotation_x.set< Rotation3f::AROUND_THE_X_AXIS >(0.50f);
-    rotation_y.set< Rotation3f::AROUND_THE_Y_AXIS >(angle);
+    Projection3f  projection(5, 15, 20, float(view->width) / float(view->height));
 
     // Creación de la matriz de transformación unificada:
 
-    Transformation3f transformation = projection * translation * rotation_x * rotation_y * scaling;
+    Transformation3f transformation = view->mainCamera.getCameraProjection() * translation * rotation_x * rotation_y * scale;
 
     // Se transforman todos los vértices usando la matriz de transformación resultante:
 
@@ -261,7 +190,13 @@ void RenderModel::Model3D::update(float t, View& view)
         vertex[2] *= divisor;
         vertex[3] = 1.f;
     }
+}
 
+void RenderModel::Model3D::update(float t, View& view)
+{
+
+    applyTransformation();
+   
 }
 
 void RenderModel::Model3D::paint(View& view)

@@ -25,8 +25,10 @@ int main ()
     // Create the window and the view that will be shown within the window:
 
     Window window(VideoMode(window_width, window_height), "3D Render Model", Style::Titlebar | Style::Close, ContextSettings(32));
-    View   view  (window_width, window_height);
-    view.addModel("Cubo", Model3D("..//..//assets//models//cube.obj"));
+
+    Camera camera  (5 ,15, 20, float(window_width) / float(window_height));
+    View   view  (window_width, window_height, camera);
+    view.addModel("Cubo", Model3D("..//..//assets//models//cube.obj", 0.2f, Point3f({ 0,0,0 }), Point3f({ 0, 0, -10 }), view));
 
     // Initialization:
 
