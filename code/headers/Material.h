@@ -3,6 +3,7 @@
 
 #include "Color_Buffer_Rgb565.hpp"
 #include "Color_Buffer_Rgba8888.hpp"
+#include "Model3D.hpp"
 
 namespace RenderModel {
 
@@ -12,17 +13,21 @@ namespace RenderModel {
 
     public:
 
-        typedef Color_Buffer_Rgba8888 Color_Buffer;
-        typedef Color_Buffer::Color   Color;
-       
-
-    private:
-
-        Color color;
 
     public:
 
-        Material();
+        
+        Model3D::Color Ka;
+        
+        Model3D::Color Kd;
+        
+        Model3D::Color Ks;
+        
+        Model3D::Color Ke;
+
+    public:
+
+        Material(Model3D::Color _ka, Model3D::Color _kd, Model3D::Color _ks, Model3D::Color _ke);
         ~Material();
 
 

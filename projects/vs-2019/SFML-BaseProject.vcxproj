@@ -24,6 +24,7 @@
     <ClInclude Include="..\..\code\headers\Color_Buffer_Rgb565.hpp" />
     <ClInclude Include="..\..\code\headers\Color_Buffer_Rgba8888.hpp" />
     <ClInclude Include="..\..\code\headers\Material.h" />
+    <ClInclude Include="..\..\code\headers\Math.hpp" />
     <ClInclude Include="..\..\code\headers\Mesh.h" />
     <ClInclude Include="..\..\code\headers\Model3D.hpp" />
     <ClInclude Include="..\..\code\headers\Rasterizer.hpp" />

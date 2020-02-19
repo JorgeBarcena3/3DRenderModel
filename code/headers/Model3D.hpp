@@ -26,6 +26,7 @@ namespace RenderModel {
     class View;
     class Mesh;
     class View;
+    class Material;
 
     /*
     * Clase que va a manejar un modelo 3D
@@ -35,12 +36,14 @@ namespace RenderModel {
 
     public:
 
-        typedef Color_Buffer_Rgba8888 Color_Buffer;
-        typedef Color_Buffer::Color   Color;
-        typedef Point4f               Vertex;
-        typedef vector< Vertex >      Vertex_Buffer;
-        typedef vector< int    >      Index_Buffer;
-        typedef vector< Color  >      Vertex_Colors;
+        typedef Color_Buffer_Rgba8888            Color_Buffer;
+        typedef Color_Buffer::Color              Color;
+        typedef Point4f                          Vertex;
+        typedef vector< Vertex >                 Vertex_Buffer;
+        typedef vector<int    >                 Index_Buffer;
+        typedef vector< Color  >                 Vertex_Colors;
+        typedef vector< Point3f  >               Normals_Buffer;
+        typedef vector< shared_ptr<Material> >   Materials_Buffer;
 
         /*
         * La clase Mesh puede acceder a las variables privadas del modelo3D
@@ -65,6 +68,11 @@ namespace RenderModel {
         Rotation3f    rotation_y;
 
         /*
+        * Rotacion en Z del modelo
+        */
+        Rotation3f    rotation_z;
+
+        /*
         * Translacion del modelo
         */
         Translation3f translation;
@@ -73,6 +81,16 @@ namespace RenderModel {
         * Vertices originales del modelo
         */
         Vertex_Buffer      original_vertices;
+
+        /*
+        * Normales del modelo
+        */
+        Normals_Buffer      original_normals;
+
+        /*
+        * Normales del modelo
+        */
+        Materials_Buffer    material_list;
 
         /*
         * Colores originales
@@ -121,8 +139,8 @@ namespace RenderModel {
         void applyTransformation();
         void addChild(shared_ptr<Model3D> child);
         void update(float t, View& view);
-        void paint(View& view);  
-        
+        void paint(View& view);
+
 
     };
 

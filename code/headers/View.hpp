@@ -51,7 +51,9 @@ namespace RenderModel
 
     public:
 
-        View(int width, int height, Camera camera);
+        Point3f lightPosition;
+
+        View(int width, int height, Camera camera, Point3f lightPosition);
 
         void addModel(string name, Model3D model);
         void update(float t);

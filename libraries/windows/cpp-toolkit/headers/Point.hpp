@@ -79,6 +79,7 @@
             explicit Point(const Matrix< DIMENSION, 1, OTHER_NUMERIC_TYPE > & matrix) : Parent(reinterpret_cast< const OTHER_NUMERIC_TYPE (&) [DIMENSION] >(matrix))
             {
             }
+                        
 
         private:
 

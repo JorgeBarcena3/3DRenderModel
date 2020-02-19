@@ -17,13 +17,14 @@ using namespace toolkit;
 namespace RenderModel
 {
 
-    View::View(int width, int height, Camera _camera)
+    View::View(int width, int height, Camera _camera, Point3f _lightPosition)
         :
         width(width),
         height(height),
         Color_buffer(width, height),
         rasterizer(Color_buffer),
-        mainCamera(_camera)
+        mainCamera(_camera),
+        lightPosition(_lightPosition)
     {
 
     }

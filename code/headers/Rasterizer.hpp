@@ -42,7 +42,7 @@
             int z_cache0[1082];
             int z_cache1[1082];
 
-            std::vector< int > z_buffer;
+            std::vector<int> z_buffer;
 
         public:
 
@@ -79,7 +79,7 @@
 
                 for (int * z = z_buffer.data (), * end = z + z_buffer.size (); z != end; z++)
                 {
-                    *z = std::numeric_limits< int >::max ();
+                    *z = std::numeric_limits<int>::max ();
                 }
             }
 
@@ -156,7 +156,7 @@
 
             while (true)
             {
-                interpolate< int64_t, 32 > (offset_cache0, o0, o1, y0, y1);
+                interpolate<int64_t, 32 > (offset_cache0, o0, o1, y0, y1);
 
                 if (current_index == indices_begin) current_index = indices_back; else current_index--;
                 if (current_index == end_index    ) break;
@@ -183,7 +183,7 @@
 
             while (true)
             {
-                interpolate< int64_t, 32 > (offset_cache1, o0, o1, y0, y1);
+                interpolate<int64_t, 32 > (offset_cache1, o0, o1, y0, y1);
 
                 if (current_index == indices_back) current_index = indices_begin; else current_index++;
                 if (current_index == end_index   ) break;
@@ -278,8 +278,8 @@
 
             while (true)
             {
-                interpolate< int64_t, 32 > (offset_cache0, o0, o1, y0, y1);
-                interpolate< int32_t,  0 > (     z_cache0, z0, z1, y0, y1);
+                interpolate<int64_t, 32 > (offset_cache0, o0, o1, y0, y1);
+                interpolate<int32_t,  0 > (     z_cache0, z0, z1, y0, y1);
 
                 if (current_index == indices_begin) current_index = indices_back; else current_index--;
                 if (current_index == end_index    ) break;
@@ -310,8 +310,8 @@
 
             while (true)
             {
-                interpolate< int64_t, 32 > (offset_cache1, o0, o1, y0, y1);
-                interpolate< int32_t,  0 > (     z_cache1, z0, z1, y0, y1);
+                interpolate<int64_t, 32 > (offset_cache1, o0, o1, y0, y1);
+                interpolate<int32_t,  0 > (     z_cache1, z0, z1, y0, y1);
 
                 if (current_index == indices_back) current_index = indices_begin; else current_index++;
                 if (current_index == end_index   ) break;

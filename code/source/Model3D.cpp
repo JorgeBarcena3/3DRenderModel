@@ -4,15 +4,14 @@
 
 #include <cmath>
 #include <cassert>
+#include <Vector.hpp>
 #include "..\headers\Model3D.hpp"
 #include "..\headers\Camera.hpp"
-#include <Vector.hpp>
-
 #include "../headers/View.hpp"
 #include "../headers/Mesh.h"
+#include "../headers/Material.h"
 
 using namespace toolkit;
-
 
 RenderModel::Model3D::Model3D(const char* _path, float _scale, Point3f _rotation, Point3f _position, shared_ptr<View> _view, shared_ptr<Model3D> _padre)
 {
@@ -33,16 +32,18 @@ RenderModel::Model3D::Model3D(const char* _path, float _scale, Point3f _rotation
 
     rotation_y.set< Rotation3f::AROUND_THE_Y_AXIS >(_rotation[1]);
 
+    rotation_z.set< Rotation3f::AROUND_THE_Z_AXIS >(_rotation[2]);
+
     translation = Translation3f(_position[0], _position[1], _position[2]);
 
     applyTransformation();
-   
+
 }
 
 
 RenderModel::Model3D::~Model3D()
 {
-   
+
 }
 
 void RenderModel::Model3D::loadObj(const char* path)
@@ -54,54 +55,90 @@ void RenderModel::Model3D::loadObj(const char* path)
     std::string warn;
     std::string err;
 
-    bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path);
+    string mtlPath = path;
+
+    if (mtlPath.find_last_of("/\\") != std::string::npos)
+        mtlPath = mtlPath.substr(0, mtlPath.find_last_of("/\\"));
+    else
+        mtlPath = ".";
+
+
+    bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path, mtlPath.c_str());
 
 
     if (ret) //Colocamos los datos necesarios
     {
         vector< vector<float> > vertices_vector;
+        vector< vector<float> > normals_vector;
         vector< vector<float> > originalColors;
-        vector< vector<int  > > triangles;
+        vector< vector<int  > > trianglesIndex;
+        vector< vector<int  > > normalsIndex;
 
+        //Añadimos los materiales
+        for (int m = 0; m < materials.size(); m++)
+        {
+            Color Ka, Kd, Ke, Ks;
+            Ka.set(materials[m].ambient[0], materials[m].ambient[1], materials[m].ambient[2]);
+            Kd.set(materials[m].diffuse[0], materials[m].diffuse[1], materials[m].diffuse[2]);
+            Ke.set(materials[m].emission[0], materials[m].emission[1], materials[m].emission[2]);
+            Ks.set(materials[m].specular[0], materials[m].specular[1], materials[m].specular[2]);
+
+            material_list.push_back(shared_ptr<Material>(new Material(Ka, Kd, Ks, Ke)));
+        }
 
         // En cada mesh añadimos los indices de sus vertices
         // Tambien guardamos los triangulos que forman sus caras
         for (int s = 0; s < shapes.size(); s++)
         {
-            vector< int > meshIndices;
+            vector<int> meshIndices;
+            vector<int> materialIndices;
 
             // Offset de los indices de los trianguloas
             int triangleIndiceOffset = 0;
+            int normalsIndiceOffset = 0;
 
             for (int f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++)
             {
 
                 int facesPoligon = shapes[s].mesh.num_face_vertices[f];
 
-                triangles.push_back(vector<int>(facesPoligon));
-                triangles[triangles.size() - 1][0] = (shapes[s].mesh.indices[triangleIndiceOffset++].vertex_index);
-                triangles[triangles.size() - 1][1] = (shapes[s].mesh.indices[triangleIndiceOffset++].vertex_index);
-                triangles[triangles.size() - 1][2] = (shapes[s].mesh.indices[triangleIndiceOffset++].vertex_index);
+                trianglesIndex.push_back(vector<int>(facesPoligon));
+                trianglesIndex[trianglesIndex.size() - 1][0] = (shapes[s].mesh.indices[triangleIndiceOffset++].vertex_index);
+                trianglesIndex[trianglesIndex.size() - 1][1] = (shapes[s].mesh.indices[triangleIndiceOffset++].vertex_index);
+                trianglesIndex[trianglesIndex.size() - 1][2] = (shapes[s].mesh.indices[triangleIndiceOffset++].vertex_index);
+
+                normalsIndex.push_back(vector<int>(facesPoligon));
+                normalsIndex[normalsIndex.size() - 1][0] = (shapes[s].mesh.indices[normalsIndiceOffset++].normal_index);
+                normalsIndex[normalsIndex.size() - 1][1] = (shapes[s].mesh.indices[normalsIndiceOffset++].normal_index);
+                normalsIndex[normalsIndex.size() - 1][2] = (shapes[s].mesh.indices[normalsIndiceOffset++].normal_index);
+
+                materialIndices.push_back(shapes[s].mesh.material_ids[f]);
 
             }
 
             // Se generan los índices de los triángulos
-            int number_of_triangles = triangles.size();
+            int number_of_triangles = trianglesIndex.size();
 
-            Index_Buffer meshVerices(number_of_triangles * 3);
-
+            Index_Buffer meshVerices(number_of_triangles * (int)3);
+            Index_Buffer meshNormals(number_of_triangles * (int)3);
 
             Index_Buffer::iterator mesh_indices_iterator = meshVerices.begin();
+            Index_Buffer::iterator mesh_normals_indices_iterator = meshNormals.begin();
 
             for (int triangle_index = 0; triangle_index < number_of_triangles; triangle_index++)
             {
-                *mesh_indices_iterator++ = triangles[triangle_index][0];
-                *mesh_indices_iterator++ = triangles[triangle_index][1];
-                *mesh_indices_iterator++ = triangles[triangle_index][2];
+                *mesh_indices_iterator++ = trianglesIndex[triangle_index][0];
+                *mesh_indices_iterator++ = trianglesIndex[triangle_index][1];
+                *mesh_indices_iterator++ = trianglesIndex[triangle_index][2];
+
+                *mesh_normals_indices_iterator++ = normalsIndex[triangle_index][0];
+                *mesh_normals_indices_iterator++ = normalsIndex[triangle_index][1];
+                *mesh_normals_indices_iterator++ = normalsIndex[triangle_index][2];
             }
+            
 
             //Añadimos las distintas meshes con los vertices
-            meshList.push_back(shared_ptr<Mesh> (new Mesh(meshVerices)));
+            meshList.push_back(shared_ptr<Mesh>(new Mesh(meshVerices, meshNormals, materialIndices )));
 
         }
 
@@ -109,6 +146,7 @@ void RenderModel::Model3D::loadObj(const char* path)
 
         int numeroVertices = attrib.GetVertices().size() / 3;
         int verticesoffset = 0;
+        int normalsOffset = 0;
         int colorOffset = 0;
 
         for (int i = 0; i < numeroVertices; i++)
@@ -120,6 +158,14 @@ void RenderModel::Model3D::loadObj(const char* path)
                        attrib.vertices[verticesoffset++],
                        1.f
                     }));
+
+            if (attrib.normals.size() > (i * (int)3))
+                original_normals.push_back(
+                    Point3f({
+                           attrib.normals[normalsOffset++],
+                           attrib.normals[normalsOffset++],
+                           attrib.normals[normalsOffset++]
+                        }));
 
 
             originalColors.push_back(
@@ -147,6 +193,7 @@ void RenderModel::Model3D::loadObj(const char* path)
                  vertices_vector[index].at(2),
                  vertices_vector[index].at(3)
                 });
+
         }
 
         transformed_vertices.resize(number_of_vertices);
@@ -177,7 +224,7 @@ void RenderModel::Model3D::applyTransformation()
 
     // Creación de la matriz de transformación unificada:
 
-    Transformation3f transformation = view->mainCamera.getCameraProjection() * translation * rotation_x * rotation_y * scale;
+    Transformation3f transformation = view->mainCamera.getCameraProjection() * translation * rotation_x * rotation_y * rotation_z * scale;
 
     // Se transforman todos los vértices usando la matriz de transformación resultante:
 
@@ -207,9 +254,16 @@ void RenderModel::Model3D::addChild(shared_ptr<Model3D> child)
 
 void RenderModel::Model3D::update(float t, View& view)
 {
+    static float angle = 0.f;
+
+    angle += 0.025f;
+
+    rotation_z.set< Rotation3f::AROUND_THE_Z_AXIS >(angle);
+    rotation_x.set< Rotation3f::AROUND_THE_X_AXIS >(angle);
+    rotation_y.set< Rotation3f::AROUND_THE_Y_AXIS >(angle);
 
     applyTransformation();
-   
+
 }
 
 void RenderModel::Model3D::paint(View& view)
