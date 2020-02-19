@@ -62,25 +62,17 @@ namespace RenderModel
 
     }
 
-    bool View::cutout(const Point4i* const vertices, int* indices_begin, int* indices_end)
+    vector< Point4i  >  View::clip(const Point4i* const vertices, int* indices_begin, int* indices_end)
     {
-        for (int* i = indices_begin; i != indices_end; i++)
+        vector< Point4i > vertices_clipped;
+
+        for (int * i = indices_begin; i < indices_end; i++)
         {
-            int px0 = (vertices[*i])[0];
-            int py0 = (vertices[*i])[1];
-
-            if (
-                (px0 <= 0 || px0 >= width)
-                || (py0 <= 0 || py0 >= width)
-
-                )
-            {
-                //No lo renderizamos
-                return false;
-            }
+            vertices_clipped.push_back(vertices[*i]);
         }
 
-        return true;
+        return vertices_clipped;
+
     }
 
 

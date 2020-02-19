@@ -10,6 +10,7 @@
 #include "../headers/View.hpp"
 #include "../headers/Mesh.h"
 #include "../headers/Material.h"
+#include "../headers/Math.hpp"
 
 using namespace toolkit;
 
@@ -135,82 +136,91 @@ void RenderModel::Model3D::loadObj(const char* path)
                 *mesh_normals_indices_iterator++ = normalsIndex[triangle_index][1];
                 *mesh_normals_indices_iterator++ = normalsIndex[triangle_index][2];
             }
-            
+
 
             //Añadimos las distintas meshes con los vertices
-            meshList.push_back(shared_ptr<Mesh>(new Mesh(meshVerices, meshNormals, materialIndices )));
+            meshList.push_back(shared_ptr<Mesh>(new Mesh(meshVerices, meshNormals, materialIndices)));
 
-        }
+            // Vertices, colores, normales... del modelo 3D
 
-        // Vertices, colores, normales... del modelo 3D
+            int numeroVertices = attrib.GetVertices().size() / 3;
+            int verticesoffset = 0;
+            int normalsOffset = 0;
+            int colorOffset = 0;
 
-        int numeroVertices = attrib.GetVertices().size() / 3;
-        int verticesoffset = 0;
-        int normalsOffset = 0;
-        int colorOffset = 0;
+            for (int i = 0; i < numeroVertices; i++)
+            {
 
-        for (int i = 0; i < numeroVertices; i++)
-        {
-            vertices_vector.push_back(
-                vector<float>({
-                       attrib.vertices[verticesoffset++],
-                       attrib.vertices[verticesoffset++],
-                       attrib.vertices[verticesoffset++],
-                       1.f
-                    }));
+                tinyobj::index_t idx = shapes[s].mesh.indices[normalsOffset + i];
 
-            if (attrib.normals.size() > (i * (int)3))
-                original_normals.push_back(
-                    Point3f({
-                           attrib.normals[normalsOffset++],
-                           attrib.normals[normalsOffset++],
-                           attrib.normals[normalsOffset++]
+                vertices_vector.push_back(
+                    vector<float>({
+                           attrib.vertices[verticesoffset++],
+                           attrib.vertices[verticesoffset++],
+                           attrib.vertices[verticesoffset++],
+                           1.f
                         }));
 
 
-            originalColors.push_back(
-                vector<float>({
-                      175, // attrib.colors[colorOffset++],
-                      175, // attrib.colors[colorOffset++],
-                      175 // attrib.colors[colorOffset++],
-                    })
-            );
+                original_normals.push_back(
+                    Point4f({
+                           attrib.normals[3 * idx.normal_index + 0],
+                           attrib.normals[3 * idx.normal_index + 1],
+                           attrib.normals[3 * idx.normal_index + 2],
+                           1.f
+                        }));
 
-        }
 
-        // Se cargan en un búffer los datos del array:
+                originalColors.push_back(
+                    vector<float>({
+                          175, // attrib.colors[colorOffset++],
+                          175, // attrib.colors[colorOffset++],
+                          175 // attrib.colors[colorOffset++],
+                        })
+                );
 
-        int lastVertex = original_vertices.size();
-        int number_of_vertices = original_vertices.size() + vertices_vector.size();
 
-        original_vertices.resize(number_of_vertices);
+                normalsOffset += 3;
 
-        for (int index = lastVertex; index < number_of_vertices; index++)
-        {
-            original_vertices[index] = Vertex({
-                 vertices_vector[index].at(0),
-                 vertices_vector[index].at(1),
-                 vertices_vector[index].at(2),
-                 vertices_vector[index].at(3)
-                });
+            }
 
-        }
+            transformed_normals.resize(original_normals.size());
+            // Se cargan en un búffer los datos del array:
 
-        transformed_vertices.resize(number_of_vertices);
-        display_vertices.resize(number_of_vertices);
+            int lastVertex = original_vertices.size();
+            int number_of_vertices = original_vertices.size() + vertices_vector.size();
 
-        // Se definen los datos de color de los vértices:
+            original_vertices.resize(number_of_vertices);
 
-        lastVertex = original_colors.size();
-        int number_of_colors = original_colors.size() + originalColors.size();
+            for (int index = lastVertex; index < number_of_vertices; index++)
+            {
+                original_vertices[index] = Vertex({
+                     vertices_vector[index].at(0),
+                     vertices_vector[index].at(1),
+                     vertices_vector[index].at(2),
+                     vertices_vector[index].at(3)
+                    });
 
-        assert(number_of_colors == number_of_vertices);             // Debe haber el mismo número
-                                                                    // de colores que de vértices
-        original_colors.resize(number_of_colors);
+            }
 
-        for (int index = lastVertex; index < number_of_colors; index++)
-        {
-            original_colors[index].set((int)originalColors[index][0], (int)originalColors[index][1], (int)originalColors[index][2]);
+            transformed_vertices.resize(number_of_vertices);
+            display_vertices.resize(number_of_vertices);
+
+            // Se definen los datos de color de los vértices:
+
+            lastVertex = original_colors.size();
+            int number_of_colors = original_colors.size() + originalColors.size();
+
+            assert(number_of_colors == number_of_vertices);             // Debe haber el mismo número
+                                                                        // de colores que de vértices
+            original_colors.resize(number_of_colors);
+            transformed_colors.resize(number_of_colors);
+
+            for (int index = lastVertex; index < number_of_colors; index++)
+            {
+                original_colors[index].set((int)originalColors[index][0], (int)originalColors[index][1], (int)originalColors[index][2]);
+            }
+
         }
 
 
@@ -220,7 +230,7 @@ void RenderModel::Model3D::loadObj(const char* path)
 void RenderModel::Model3D::applyTransformation()
 {
 
-    Projection3f  projection(5, 15, 20, float(view->width) / float(view->height));
+    Projection3f  projection = view->mainCamera.getCameraProjection();
 
     // Creación de la matriz de transformación unificada:
 
@@ -234,6 +244,7 @@ void RenderModel::Model3D::applyTransformation()
         // se guarda el resultado en otro vertex buffer:
 
         Vertex& vertex = transformed_vertices[index] = Matrix44f(transformation) * Matrix41f(original_vertices[index]);
+        Vertex& Normalvertex = transformed_normals[index] = Matrix44f(transformation) * Matrix41f(original_normals[index]);
 
         // La matriz de proyección en perspectiva hace que el último componente del vector
         // transformado no tenga valor 1.0, por lo que hay que normalizarlo dividiendo:
@@ -244,7 +255,16 @@ void RenderModel::Model3D::applyTransformation()
         vertex[1] *= divisor;
         vertex[2] *= divisor;
         vertex[3] = 1.f;
+
+        divisor = 1.f / Normalvertex[3];
+        Normalvertex[0] *= divisor;
+        Normalvertex[1] *= divisor;
+        Normalvertex[2] *= divisor;
+        Normalvertex[3] = 1.f;
+
+        transformed_colors[index] = getColor(index);
     }
+      
 }
 
 void RenderModel::Model3D::addChild(shared_ptr<Model3D> child)
@@ -257,9 +277,7 @@ void RenderModel::Model3D::update(float t, View& view)
     static float angle = 0.f;
 
     angle += 0.025f;
-
-    rotation_z.set< Rotation3f::AROUND_THE_Z_AXIS >(angle);
-    rotation_x.set< Rotation3f::AROUND_THE_X_AXIS >(angle);
+  
     rotation_y.set< Rotation3f::AROUND_THE_Y_AXIS >(angle);
 
     applyTransformation();
@@ -268,11 +286,46 @@ void RenderModel::Model3D::update(float t, View& view)
 
 void RenderModel::Model3D::paint(View& view)
 {
+    for (int index = 0; index < transformed_colors.size(); index++)
+    {
+       transformed_colors[index] = getColor(index);
+    }
 
     for (auto mesh : meshList)
     {
         mesh->render(view, *this);
     }
+
+}
+
+
+RenderModel::Model3D::Color RenderModel::Model3D::getColor(int indice)
+{
+
+    vec3f vecColor;
+
+    if (original_normals.size() > 0)
+    {
+
+        vec3f N = vec3<float>::toVec3f(transformed_normals[indice]).normalize();
+        vec3f L = (vec3<float>::toVec3f(transformed_vertices[indice]) - vec3<float>::toVec3f(view->lightPosition)).normalize();
+        vecColor = vec3<float>::toVec3f(original_colors[indice]);
+
+        if (material_list.size() > 0)
+            vecColor *= material_list[0]->Kd.data.component.r;
+
+        vecColor *= std::max(0.f, dot(N, L));
+
+    }
+    else
+    {
+        vecColor = vec3<float>::toVec3f(original_colors[indice]);
+    }
+
+    Model3D::Color myColor;
+    myColor.set((float)vecColor.r, (float)vecColor.g, (float)vecColor.b);
+
+    return myColor;
 
 }
 

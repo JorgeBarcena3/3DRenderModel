@@ -42,7 +42,7 @@ namespace RenderModel {
         typedef vector< Vertex >                 Vertex_Buffer;
         typedef vector<int    >                 Index_Buffer;
         typedef vector< Color  >                 Vertex_Colors;
-        typedef vector< Point3f  >               Normals_Buffer;
+        typedef vector< Vertex  >               Normals_Buffer;
         typedef vector< shared_ptr<Material> >   Materials_Buffer;
 
         /*
@@ -98,9 +98,19 @@ namespace RenderModel {
         Vertex_Colors      original_colors;
 
         /*
+        * Colores originales
+        */
+        Vertex_Colors      transformed_colors;
+
+        /*
         * Vertices despues de aplicarles X transformacion
         */
         Vertex_Buffer      transformed_vertices;
+
+        /*
+        * Vertices despues de aplicarles X transformacion
+        */
+        Vertex_Buffer      transformed_normals;
 
         /*
         * Vertices de la pantalla
@@ -140,6 +150,7 @@ namespace RenderModel {
         void addChild(shared_ptr<Model3D> child);
         void update(float t, View& view);
         void paint(View& view);
+        Color getColor(int indices);
 
 
     };

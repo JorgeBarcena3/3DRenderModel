@@ -44,8 +44,6 @@ namespace RenderModel {
 
         bool is_frontface(const Vertex* const projected_vertices, const int* const indices);
 
-        Color getColor(View& view, Model3D * model, int * indices);
-
     };
 
 }

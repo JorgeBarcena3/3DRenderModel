@@ -59,7 +59,7 @@ namespace RenderModel
         void update(float t);
         void paint();
 
-        bool cutout(const Point4i* const vertices, int* indices_begin, int* indices_end);
+        vector< Point4i  >  clip(const Point4i* const vertices, int* indices_begin, int* indices_end);
 
     };
 
