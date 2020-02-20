@@ -4,6 +4,7 @@
 
 #include <cmath>
 #include <cassert>
+#include <math.h>
 #include <Vector.hpp>
 #include "..\headers\Model3D.hpp"
 #include "..\headers\Camera.hpp"
@@ -15,36 +16,32 @@
 using namespace toolkit;
 
 RenderModel::Model3D::Model3D(const char* _path, float _scale, Point3f _rotation, Point3f _position, shared_ptr<View> _view, shared_ptr<Model3D> _padre)
+    : transform ( Transform(_position, _rotation, _scale) )
 {
     loadObj(_path);
 
-    padre = _padre;
+    parent = _padre;
 
-    if (padre != nullptr)
+    if (parent != nullptr)
     {
-        padre->addChild(shared_ptr<Model3D>(this));
+        parent->addChild(shared_ptr<Model3D>(this));
     }
 
-    view = _view;
-
-    scale = Scaling3f(_scale);
-
-    rotation_x.set< Rotation3f::AROUND_THE_X_AXIS >(_rotation[0]);
-
-    rotation_y.set< Rotation3f::AROUND_THE_Y_AXIS >(_rotation[1]);
-
-    rotation_z.set< Rotation3f::AROUND_THE_Z_AXIS >(_rotation[2]);
-
-    translation = Translation3f(_position[0], _position[1], _position[2]);
+    view = _view;   
 
     applyTransformation();
 
 }
 
-
 RenderModel::Model3D::~Model3D()
 {
 
+}
+
+void RenderModel::Model3D::setUpdateFunction(std::function<void(Transform*)> _UpdateFunction)
+{
+
+    UpdateFunction = _UpdateFunction;
 }
 
 void RenderModel::Model3D::loadObj(const char* path)
@@ -174,9 +171,9 @@ void RenderModel::Model3D::loadObj(const char* path)
 
                 originalColors.push_back(
                     vector<float>({
-                          68, // attrib.colors[colorOffset++],
-                          255, // attrib.colors[colorOffset++],
-                          158 // attrib.colors[colorOffset++],
+                          floorf(rand() % (255 - 1) + 1) , // attrib.colors[colorOffset++],
+                          floorf(rand() % (255 - 1) + 1) , // attrib.colors[colorOffset++],
+                          floorf(rand() % (255 - 1) + 1) // attrib.colors[colorOffset++],
                         })
                 );
 
@@ -230,12 +227,8 @@ void RenderModel::Model3D::loadObj(const char* path)
 
 void RenderModel::Model3D::applyTransformation()
 {
-
-    Projection3f  projection = view->mainCamera.getCameraProjection();
-
-    // Creación de la matriz de transformación unificada:
-
-    Transformation3f transformation = view->mainCamera.getCameraProjection() * translation * rotation_x * rotation_y * rotation_z * scale;
+    Transformation3f transformation = view->mainCamera.getCameraProjection()
+                    * getTransformation();
 
     // Se transforman todos los vértices usando la matriz de transformación resultante:
 
@@ -245,7 +238,6 @@ void RenderModel::Model3D::applyTransformation()
         // se guarda el resultado en otro vertex buffer:
 
         Vertex& vertex = transformed_vertices[index] = Matrix44f(transformation) * Matrix41f(original_vertices[index]);
-        Vertex& Normalvertex = transformed_normals[index] = Matrix44f(transformation) * Matrix41f(original_normals[index]);
 
         // La matriz de proyección en perspectiva hace que el último componente del vector
         // transformado no tenga valor 1.0, por lo que hay que normalizarlo dividiendo:
@@ -257,6 +249,9 @@ void RenderModel::Model3D::applyTransformation()
         vertex[2] *= divisor;
         vertex[3] = 1.f;
 
+        //Normales
+        Vertex& Normalvertex = transformed_normals[index] = Matrix44f(transformation) * Matrix41f(original_normals[index]);
+
         divisor = 1.f / Normalvertex[3];
         Normalvertex[0] *= divisor;
         Normalvertex[1] *= divisor;
@@ -264,22 +259,22 @@ void RenderModel::Model3D::applyTransformation()
         Normalvertex[3] = 1.f;
 
         transformed_colors[index] = getColor(index);
+       
     }
 
 }
 
 void RenderModel::Model3D::addChild(shared_ptr<Model3D> child)
 {
-    hijos.push_back(child);
+    childs.push_back(child);
 }
 
 void RenderModel::Model3D::update(float t, View& view)
 {
-    static float angle = 0.f;
 
-    angle += 0.025f;
-
-    rotation_y.set< Rotation3f::AROUND_THE_Y_AXIS >(angle);
+    if (UpdateFunction)
+        UpdateFunction(&transform);
+    
 
     applyTransformation();
 
@@ -328,5 +323,17 @@ RenderModel::Model3D::Color RenderModel::Model3D::getColor(int indice)
 
     return myColor;
 
+}
+
+Transformation3f RenderModel::Model3D::getTransformation()
+{
+    Transformation3f myTransform = transform.getTransformation();
+
+    if (parent)
+    {
+        return parent->getTransformation() * myTransform;
+    }
+
+    return myTransform;
 }
 

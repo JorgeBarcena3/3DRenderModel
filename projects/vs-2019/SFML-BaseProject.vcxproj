@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\code\headers\Transform.cpp" />
     <ClCompile Include="..\..\code\source\Camera.cpp" />
     <ClCompile Include="..\..\code\source\main.cpp" />
     <ClCompile Include="..\..\code\source\Material.cpp" />
@@ -29,6 +30,7 @@
     <ClInclude Include="..\..\code\headers\Model3D.hpp" />
     <ClInclude Include="..\..\code\headers\Rasterizer.hpp" />
     <ClInclude Include="..\..\code\headers\SutherlandHodgmanClipping.hpp" />
+    <ClInclude Include="..\..\code\headers\Transform.hpp" />
     <ClInclude Include="..\..\code\headers\View.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

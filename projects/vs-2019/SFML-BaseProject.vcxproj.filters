@@ -27,6 +27,7 @@
     <ClCompile Include="..\..\code\source\Camera.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\code\headers\Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\code\headers\Color_Buffer.hpp">
@@ -60,6 +61,9 @@
       <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\code\headers\SutherlandHodgmanClipping.hpp">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\headers\Transform.hpp">
       <Filter>headers</Filter>
     </ClInclude>
   </ItemGroup>

@@ -11,6 +11,8 @@
 #include <Rotation.hpp>
 #include <Projection.hpp>
 #include <Translation.hpp>
+#include <functional>
+#include "Transform.hpp"
 
 namespace RenderModel {
 
@@ -23,6 +25,7 @@ namespace RenderModel {
     using toolkit::Scaling3f;
     using toolkit::Rotation3f;
     using toolkit::Translation3f;
+    using toolkit::Transformation3f;
     class View;
     class Mesh;
     class View;
@@ -53,29 +56,9 @@ namespace RenderModel {
     private:
 
         /*
-        * Escala del modelo
+        * Transform del modelo
         */
-        Scaling3f     scale;
-
-        /*
-        * Rotacion en X del modelo
-        */
-        Rotation3f    rotation_x;
-
-        /*
-        * Rotacion en Y del modelo
-        */
-        Rotation3f    rotation_y;
-
-        /*
-        * Rotacion en Z del modelo
-        */
-        Rotation3f    rotation_z;
-
-        /*
-        * Translacion del modelo
-        */
-        Translation3f translation;
+        Transform transform;
 
         /*
         * Vertices originales del modelo
@@ -130,14 +113,19 @@ namespace RenderModel {
         /*
         * Padre de la del modelo 3D
         */
-        shared_ptr<Model3D>   padre;
+        shared_ptr<Model3D>   parent;
+
+        /*
+        * Funcion que se ejecutara en el update
+        */
+        std::function<void(Transform*)> UpdateFunction;
 
     public:
 
         /*
         * Hijos que contiene el modelo 3D
         */
-        vector<shared_ptr<Model3D>>   hijos;
+        vector<shared_ptr<Model3D>>   childs;
 
 
     public:
@@ -145,12 +133,14 @@ namespace RenderModel {
         Model3D(const char* path, float scale, Point3f rotation, Point3f position, shared_ptr<View> view, shared_ptr<Model3D> padre);
         ~Model3D();
 
+        void setUpdateFunction(std::function<void(Transform*)> UpdateFunction);
         void loadObj(const char* path);
         void applyTransformation();
         void addChild(shared_ptr<Model3D> child);
         void update(float t, View& view);
         void paint(View& view);
         Color getColor(int indices);
+        Transformation3f getTransformation();
 
 
     };

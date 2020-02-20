@@ -14,13 +14,14 @@
 
 #include <Projection.hpp>
 #include <memory>
+#include "Transform.hpp"
 
 
 namespace RenderModel
 {  
 
     using toolkit::Projection3f;
-    using toolkit::Projection3f;
+    using toolkit::Point3f;
 
 
     /*
@@ -39,9 +40,14 @@ namespace RenderModel
     public:
 
         /*
+        * Transform de la camara
+        */
+        Transform transform;
+
+        /*
         * Constructor de la camara
         */
-        Camera(float near, float far, float fov, float aspectRatio);
+        Camera(float _near, float _far, float fov, float aspectRatio, Point3f _position, Point3f _rotation);
 
         /*
         * Destructor de la clase camara
@@ -57,6 +63,11 @@ namespace RenderModel
         * Devuelve la matriz de proyeccion
         */
         const Projection3f getCameraProjection();
+
+        /*
+        * Devuelve la matriz inversa de transformacion
+        */
+        const Transformation3f getInverseTransform();
 
     };
 
