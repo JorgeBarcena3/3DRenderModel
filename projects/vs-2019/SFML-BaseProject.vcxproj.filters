@@ -59,5 +59,8 @@
     <ClInclude Include="..\..\code\headers\Math.hpp">
       <Filter>headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\code\headers\SutherlandHodgmanClipping.hpp">
+      <Filter>headers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -28,6 +28,7 @@ namespace RenderModel
     using std::map;
     using std::string;
     using std::shared_ptr;
+    using toolkit::Point4f;
 
 
     class View
@@ -38,6 +39,7 @@ namespace RenderModel
         typedef Color_Buffer_Rgba8888 Color_Buffer;
         typedef Color_Buffer::Color   Color;
         typedef map<string, shared_ptr<Model3D>>  Models3D;
+
 
 
         int width;
@@ -59,7 +61,7 @@ namespace RenderModel
         void update(float t);
         void paint();
 
-        vector< Point4i  >  clip(const Point4i* const vertices, int* indices_begin, int* indices_end);
+        vector< Point4i >  clip(const Point4i* const vertices, int* indices_begin, int* indices_end);
 
     };
 

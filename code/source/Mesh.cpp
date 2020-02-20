@@ -43,17 +43,18 @@ void RenderModel::Mesh::render(View& view, Model3D& model)
 
     for (int* indices = meshIndices.data(), *end = indices + meshIndices.size(); indices < end; indices += 3)
     {
-        if (!is_frontface(model.transformed_vertices.data(), indices))
+        if (is_frontface(model.transformed_vertices.data(), indices))
         {
-            auto display_vertices_clipped = view.clip(model.display_vertices.data(), indices, indices + 3);
+            vector< Point4i > display_vertices_clipped = view.clip(model.display_vertices.data(), indices, indices + 3);
 
             // Se establece el color del polígono a partir del color de su primer vértice:
             view.rasterizer.set_color(model.transformed_colors[*indices]);
 
             // Se rellena el polígono:
-            view.rasterizer.fill_convex_polygon_z_buffer(model.display_vertices.data(), indices, indices + 3);
+            const int clipIndice[] = { 0,1,2,3,4,5,6,7,8,9 };
 
-
+            if (display_vertices_clipped.size() > 0)
+                view.rasterizer.fill_convex_polygon_z_buffer(display_vertices_clipped.data(), clipIndice, clipIndice + display_vertices_clipped.size());
 
         }
 

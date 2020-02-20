@@ -10,9 +10,11 @@
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include "../headers/View.hpp"
+#include "../headers/SutherlandHodgmanClipping.hpp"
 #include <Vector.hpp>
 
 using namespace toolkit;
+using toolkit::Point4f;
 
 namespace RenderModel
 {
@@ -62,19 +64,12 @@ namespace RenderModel
 
     }
 
-    vector< Point4i  >  View::clip(const Point4i* const vertices, int* indices_begin, int* indices_end)
+    vector< Point4i >  View::clip(const Point4i* const vertices, int* indices_begin, int* indices_end)
     {
-        vector< Point4i > vertices_clipped;
+        vector<Point4i> clipped_vertex;
+        SutherlandHodgmanClipping::clip(vertices, indices_begin, indices_end, width, height, clipped_vertex);
 
-        for (int * i = indices_begin; i < indices_end; i++)
-        {
-            vertices_clipped.push_back(vertices[*i]);
-        }
-
-        return vertices_clipped;
-
-    }
-
-
+        return clipped_vertex;
+    } 
 
 }

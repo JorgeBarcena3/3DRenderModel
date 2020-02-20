@@ -171,11 +171,12 @@ void RenderModel::Model3D::loadObj(const char* path)
                         }));
 
 
+
                 originalColors.push_back(
                     vector<float>({
-                          175, // attrib.colors[colorOffset++],
-                          175, // attrib.colors[colorOffset++],
-                          175 // attrib.colors[colorOffset++],
+                          68, // attrib.colors[colorOffset++],
+                          255, // attrib.colors[colorOffset++],
+                          158 // attrib.colors[colorOffset++],
                         })
                 );
 
@@ -264,7 +265,7 @@ void RenderModel::Model3D::applyTransformation()
 
         transformed_colors[index] = getColor(index);
     }
-      
+
 }
 
 void RenderModel::Model3D::addChild(shared_ptr<Model3D> child)
@@ -277,7 +278,7 @@ void RenderModel::Model3D::update(float t, View& view)
     static float angle = 0.f;
 
     angle += 0.025f;
-  
+
     rotation_y.set< Rotation3f::AROUND_THE_Y_AXIS >(angle);
 
     applyTransformation();
@@ -288,7 +289,7 @@ void RenderModel::Model3D::paint(View& view)
 {
     for (int index = 0; index < transformed_colors.size(); index++)
     {
-       transformed_colors[index] = getColor(index);
+        transformed_colors[index] = getColor(index);
     }
 
     for (auto mesh : meshList)

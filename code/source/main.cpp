@@ -27,11 +27,11 @@ int main ()
     Window window(VideoMode(window_width, window_height), "3D Render Model", Style::Titlebar | Style::Close, ContextSettings(32));
 
     Camera camera  (5 ,15, 20, float(window_width) / float(window_height));
-    View   view(window_width, window_height, camera, Point3f({5,0,0}));
+    View   view(window_width, window_height, camera, Point3f({0,0,0}));
 
-    //view.addModel("CuboPadre", Model3D("..//..//assets//models//bird//12248_Bird_v1_L2.obj", 0.01f, Point3f({ -90,0,0 }), Point3f({ 0,  0, -10 }), shared_ptr<View>(new View(view)), shared_ptr<Model3D>( nullptr)));
-    view.addModel("CuboPadre", Model3D("..//..//assets//models//cube2.obj", 0.4f, Point3f({ 15,0,0 }), Point3f({ 0,  0, -10 }), shared_ptr<View>(new View(view)), shared_ptr<Model3D>( nullptr)));
-    //view.addModel("CuboHijo",  Model3D("..//..//assets//models//cube.obj", 0.1f, Point3f({ 0,0,0 }), Point3f({ 0, -1, -10 }), shared_ptr<View>(new View(view)), view.models3D["CuboPadre"]));
+    //view.addModel("Pato", Model3D("..//..//assets//models//bird//12248_Bird_v1_L2.obj", 0.01f, Point3f({ -90,0,0 }), Point3f({ 0,  0, -10 }), shared_ptr<View>(new View(view)), shared_ptr<Model3D>( nullptr)));
+    view.addModel("SpiderMan", Model3D("..//..//assets//models//spider-man.obj", 0.06f, Point3f({ 0,0,0 }), Point3f({ 0,  0, -10 }), shared_ptr<View>(new View(view)), shared_ptr<Model3D>( nullptr)));
+    //view.addModel("CuboHijo",  Model3D("..//..//assets//models//cube2.obj", 0.5f, Point3f({ 0,45,0 }), Point3f({ 2, 1.3, -10 }), shared_ptr<View>(new View(view)), shared_ptr<Model3D>(nullptr)));
 
     // Initialization:
 
