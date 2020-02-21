@@ -42,10 +42,21 @@ void RenderModel::Mesh::render(View& view, Model3D& model)
     {
         if (is_frontface(model.transformed_vertices.data(), index))
         {
+            //Determinamos un color medio entre los vertices
+            RenderModel::Color_Buffer_Rgba8888::Color finalColor;
+            finalColor.set(
+                (model.transformed_colors[*index].data.component.r + model.transformed_colors[*(index + 1)].data.component.r + model.transformed_colors[*(index + 2)].data.component.r) / 3,
+                (model.transformed_colors[*index].data.component.g + model.transformed_colors[*(index + 1)].data.component.g + model.transformed_colors[*(index + 2)].data.component.g) / 3,
+                (model.transformed_colors[*index].data.component.b + model.transformed_colors[*(index + 1)].data.component.b + model.transformed_colors[*(index + 2)].data.component.b) / 3
+            );
+
+
             vector< Point4i > display_vertices_clipped = view.clip(model.display_vertices.data(), index, index + 3);
 
+
             // Se establece el color del polígono a partir del color de su primer vértice:
-            view.rasterizer.set_color(model.transformed_colors[*index]);
+            view.rasterizer.set_color(finalColor);
+            //view.rasterizer.set_color(model.transformed_colors[*index]);
 
             // Se rellena el polígono:
             const int clipIndice[] = { 0,1,2,3,4,5,6,7,8,9 };

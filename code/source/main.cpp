@@ -95,7 +95,7 @@ int main()
     view.addModel("Sphere",                         // Nombre
         Model3D(                                    // Modelo
             "..//..//assets//models//sphere.obj",   // Path
-            1.00f,                                  // Scale
+            2.00f,                                  // Scale
             Point3f({ 0,0,0 }),                     // Rotation
             Point3f({ 0, 0, -10 }),                // Position
             shared_ptr<View>(new View(view)),       // Vista
@@ -104,7 +104,7 @@ int main()
     );
 
 
-    view.models3D["Sphere"]->setUpdateFunction(rotateYUpdate);
+    view.models3D["Sphere"]->setUpdateFunction(rotateUpdate);
 
     // Initialization:
 
