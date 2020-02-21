@@ -430,7 +430,7 @@ public:
         return vec3<float>(point[0], point[1], point[2]);
     }
 
-    static vec3<float> toVec3f(Point4f& point)
+    static vec3<float> toVec3f(toolkit::Point4f point)
     {
         return vec3<float>(point[0], point[1], point[2]);
     }

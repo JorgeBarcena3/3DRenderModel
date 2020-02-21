@@ -29,7 +29,7 @@ namespace RenderModel
     using std::string;
     using std::shared_ptr;
     using toolkit::Point4f;
-    class PointLight;
+    class Light;
 
 
     class View
@@ -55,9 +55,9 @@ namespace RenderModel
 
     public:
 
-        PointLight * Light;
+        Light * Light;
 
-        View(int width, int height, Camera camera, PointLight& lightPosition);
+        View(int width, int height, Camera camera, RenderModel::Light & lightPosition);
 
         void addModel(string name, Model3D model);
         void update(float t);

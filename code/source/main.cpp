@@ -15,96 +15,112 @@
 
 #include "../headers/View.hpp"
 #include "../headers/PointLight.hpp"
+#include "../headers/DirectionalLight.hpp"
 #include <SFML/Window.hpp>
 #include <SFML/OpenGL.hpp>
-
+#define PI 3.14159265359f
 
 using namespace sf;
 using namespace RenderModel;
 
-static const int window_width = 800;
-static const int window_height = 600;
-
-void rotateUpdate(Transform* transform)
+void rotateUpdate(Model3D * model)
 {
     static float angle = 0.f;
 
     angle += 0.01f;
 
-    transform->rotation_y.set< Rotation3f::AROUND_THE_Y_AXIS >(angle);
-    transform->rotation_x.set< Rotation3f::AROUND_THE_X_AXIS >(angle);
-    transform->rotation_z.set< Rotation3f::AROUND_THE_Z_AXIS >(angle);
+     model->transform.rotation_y.set< Rotation3f::AROUND_THE_Y_AXIS >(angle * PI / 180);
+     model->transform.rotation_x.set< Rotation3f::AROUND_THE_X_AXIS >(angle * PI / 180);
+     model->transform.rotation_z.set< Rotation3f::AROUND_THE_Z_AXIS >(angle * PI / 180);
 
 }
 
-void rotateYUpdate(Transform* transform)
+void rotateYUpdate(Model3D * model)
+{
+    static float angle = 0.f;
+
+    angle += 1.f;
+
+    model->transform.rotation_y.set< Rotation3f::AROUND_THE_Y_AXIS >(angle * PI / 180);
+
+}
+
+void rotateXUpdate(Model3D * model)
 {
     static float angle = 0.f;
 
     angle += 0.025f;
 
-    transform->rotation_y.set< Rotation3f::AROUND_THE_Y_AXIS >(angle);
-
+    model->transform.rotation_x.set< Rotation3f::AROUND_THE_X_AXIS >(angle * PI / 180);
 }
 
-void rotateXUpdate(Transform* transform)
+void rotateZUpdate(Model3D * model)
 {
     static float angle = 0.f;
 
     angle += 0.025f;
 
-    transform->rotation_x.set< Rotation3f::AROUND_THE_X_AXIS >(angle);
+    model->transform.rotation_z.set< Rotation3f::AROUND_THE_Z_AXIS >(angle * PI / 180);
 }
 
-void rotateZUpdate(Transform* transform)
+void displaceInX(Model3D * model)
 {
-    static float angle = 0.f;
+    model->transform.addDisplacement(Point3f({ 0.1f, 0.f, 0.f }));
+}
 
-    angle += 0.025f;
+void displaceInY(Model3D* model)
+{
+    model->transform.addDisplacement(Point3f({ 0.f, 0.1f, 0.f }));
+}
 
-    transform->rotation_z.set< Rotation3f::AROUND_THE_Z_AXIS >(angle);
+void displaceInZ(Model3D* model)
+{
+    model->transform.addDisplacement(Point3f({ 0.f, 0.f, 0.1f }));
 }
 
 int main()
 {
-    // Create the window and the view that will be shown within the window:
-
-    Window window(VideoMode(window_width, window_height), "3D Render Model", Style::Titlebar | Style::Close, ContextSettings(32));
+    Window window(VideoMode(800, 600), "3D Render Model | Jorge Barcena Lumbreras", Style::Titlebar | Style::Close, ContextSettings(32));
 
     Camera camera(
-        5,                                              // Near
-        15,                                             // Far
-        20,                                             // Fov
-        float(window_width) / float(window_height),     // Ratio
-        toolkit::Point3f({ 0,0,0 }),                    // Position
-        toolkit::Point3f({ 0,0,0 })                     // Rotation
+        5,                                                        // Near
+        15,                                                       // Far
+        20,                                                       // Fov
+        float(window.getSize().x) / float(window.getSize().y),    // Ratio
+        toolkit::Point3f({ 0,0,0 }),                              // Position
+        toolkit::Point3f({ 0,0,0 })                               // Rotation
     );
 
-    PointLight light(
-        Point3f({ 0,0,-2 }),      // Postion
-        View::Color({ 100,0,0 })  // Rotation
+    //PointLight light(
+    //    Point3f({ 0,0,-2 }),      // Postion
+    //    View::Color({ 100,0,0 })  // Color
+    //);
+
+    DirectionalLight light(
+        Point3f(  { -0.5,0, 1 }), // Direction
+        View::Color({ 100,0,0 })  // Color
     );
 
     View view(
-        window_width,   // Width
-        window_height,  // Height
-        camera,         // Camara
-        light           // Light
+        window.getSize().x,   // Width
+        window.getSize().y,   // Height
+        camera,               // Camara
+        light                 // Light
     );
 
     view.addModel("Sphere",                         // Nombre
         Model3D(                                    // Modelo
             "..//..//assets//models//sphere.obj",   // Path
             2.00f,                                  // Scale
-            Point3f({ 0,0,0 }),                     // Rotation
-            Point3f({ 0, 0, -10 }),                // Position
+            Point3f({ -70,0,0 }),                   // Rotation
+            Point3f({ -0, 0, -10 }),                // Position
             shared_ptr<View>(new View(view)),       // Vista
             shared_ptr<Model3D>(nullptr)            // Padre
         )
     );
 
 
-    view.models3D["Sphere"]->setUpdateFunction(rotateUpdate);
+    //view.models3D["Sphere"]->setUpdateFunction(displaceInZ);
 
     // Initialization:
 
@@ -116,10 +132,10 @@ int main()
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_TEXTURE_2D);
 
-    glViewport(0, 0, window_width, window_height);
+    glViewport(0, 0, window.getSize().x, window.getSize().y);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0, GLdouble(window_width), 0, GLdouble(window_height), -1, 1);
+    glOrtho(0, GLdouble(window.getSize().x), 0, GLdouble(window.getSize().y), -1, 1);
 
     // Run the main loop:
 

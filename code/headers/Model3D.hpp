@@ -53,12 +53,12 @@ namespace RenderModel {
         */
         friend class Mesh;
 
-    private:
-
         /*
         * Transform del modelo
         */
         Transform transform;
+
+    private:
 
         /*
         * Vertices originales del modelo
@@ -118,7 +118,7 @@ namespace RenderModel {
         /*
         * Funcion que se ejecutara en el update
         */
-        std::function<void(Transform*)> UpdateFunction;
+        std::function<void(Model3D*)> UpdateFunction;
 
     public:
 
@@ -133,7 +133,7 @@ namespace RenderModel {
         Model3D(const char* path, float scale, Point3f rotation, Point3f position, shared_ptr<View> view, shared_ptr<Model3D> padre);
         ~Model3D();
 
-        void setUpdateFunction(std::function<void(Transform*)> UpdateFunction);
+        void setUpdateFunction(std::function<void(Model3D*)> UpdateFunction);
         void loadObj(const char* path);
         void applyTransformation();
         void addChild(shared_ptr<Model3D> child);

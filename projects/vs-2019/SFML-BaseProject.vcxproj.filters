@@ -7,70 +7,117 @@
     <Filter Include="headers">
       <UniqueIdentifier>{b6ff65e9-e901-4f52-b269-41ea83f143b0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="headers\Light">
+      <UniqueIdentifier>{efef0ae8-6752-42a9-8236-29df9c77a677}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="headers\Light\Base">
+      <UniqueIdentifier>{ae8e9de6-e3c4-4976-9e15-4e74af65fef3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="headers\Render">
+      <UniqueIdentifier>{2073d72f-c793-41b3-a452-c01ed310b9f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="headers\Model">
+      <UniqueIdentifier>{60872ea8-977b-402b-bdfd-d15fe82c754f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="headers\Tools">
+      <UniqueIdentifier>{1cc98bec-03ba-4aea-8965-330f5c0cfb6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="headers\Render\Colors">
+      <UniqueIdentifier>{15d1e9e9-e1c7-4ba8-859d-f1d6fef6c511}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Render">
+      <UniqueIdentifier>{028b88e0-af13-4901-b74d-d21b273f46b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Light">
+      <UniqueIdentifier>{c14eec27-f450-4699-b986-380360a65b89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Tools">
+      <UniqueIdentifier>{d1d53930-c32d-4cbc-b5f7-9a031cd67181}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Light\Base">
+      <UniqueIdentifier>{0a88558a-a0b5-4fbf-b224-6b73bd7b40a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Model">
+      <UniqueIdentifier>{015c8528-7000-4973-aef7-89c54cda93a2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\code\source\main.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\code\source\View.cpp">
-      <Filter>source</Filter>
+    <ClCompile Include="..\..\code\source\DirectionalLight.cpp">
+      <Filter>source\Light</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\code\source\Model3D.cpp">
-      <Filter>source</Filter>
+    <ClCompile Include="..\..\code\source\PointLight.cpp">
+      <Filter>source\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\source\Light.cpp">
+      <Filter>source\Light\Base</Filter>
     </ClCompile>
     <ClCompile Include="..\..\code\source\Material.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\code\source\Mesh.cpp">
-      <Filter>source</Filter>
+      <Filter>source\Render</Filter>
     </ClCompile>
     <ClCompile Include="..\..\code\source\Camera.cpp">
-      <Filter>source</Filter>
+      <Filter>source\Render</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\code\headers\Transform.cpp" />
-    <ClCompile Include="..\..\code\source\PointLight.cpp">
-      <Filter>source</Filter>
+    <ClCompile Include="..\..\code\source\View.cpp">
+      <Filter>source\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\source\Transform.cpp">
+      <Filter>source\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\source\Model3D.cpp">
+      <Filter>source\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\source\Mesh.cpp">
+      <Filter>source\Model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\code\headers\Color_Buffer.hpp">
-      <Filter>headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\code\headers\Color_Buffer_Rgb565.hpp">
-      <Filter>headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\code\headers\Color_Buffer_Rgba8888.hpp">
-      <Filter>headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\code\headers\Rasterizer.hpp">
-      <Filter>headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\code\headers\View.hpp">
-      <Filter>headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\code\headers\Model3D.hpp">
-      <Filter>headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\code\headers\Camera.hpp">
-      <Filter>headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\code\headers\Math.hpp">
-      <Filter>headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\code\headers\SutherlandHodgmanClipping.hpp">
-      <Filter>headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\code\headers\Transform.hpp">
-      <Filter>headers</Filter>
+    <ClInclude Include="..\..\code\headers\DirectionalLight.hpp">
+      <Filter>headers\Light</Filter>
     </ClInclude>
     <ClInclude Include="..\..\code\headers\PointLight.hpp">
-      <Filter>headers</Filter>
+      <Filter>headers\Light</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\code\headers\Material.hpp">
-      <Filter>headers</Filter>
+    <ClInclude Include="..\..\code\headers\Light.hpp">
+      <Filter>headers\Light\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\headers\SutherlandHodgmanClipping.hpp">
+      <Filter>headers\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\headers\Transform.hpp">
+      <Filter>headers\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\headers\Math.hpp">
+      <Filter>headers\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\headers\Model3D.hpp">
+      <Filter>headers\Model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\code\headers\Mesh.hpp">
-      <Filter>headers</Filter>
+      <Filter>headers\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\headers\Material.hpp">
+      <Filter>headers\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\headers\Camera.hpp">
+      <Filter>headers\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\headers\Rasterizer.hpp">
+      <Filter>headers\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\headers\View.hpp">
+      <Filter>headers\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\headers\Color_Buffer.hpp">
+      <Filter>headers\Render\Colors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\headers\Color_Buffer_Rgb565.hpp">
+      <Filter>headers\Render\Colors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\headers\Color_Buffer_Rgba8888.hpp">
+      <Filter>headers\Render\Colors</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -14,22 +14,21 @@
 
 #include "Rasterizer.hpp"
 #include "View.hpp"
+#include "Light.hpp"
 
 namespace RenderModel
 {
-    class PointLight
+    class PointLight : public Light
     {
-        typedef RenderModel::View::Color Color;
-
-    public:
-
-        toolkit::Point3f position;
-        Color   color;
-
+       
     public:
        
         PointLight(Point3f position, Color color);
         
+
+        // Inherited via Light
+        virtual toolkit::Point4f getDirection(toolkit::Point4f pointInWorld) override;
+
     };
 
 }

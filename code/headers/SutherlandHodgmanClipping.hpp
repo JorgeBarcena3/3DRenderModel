@@ -43,6 +43,9 @@ namespace RenderModel
             clipped_vertex.swap(finalVertices);
         }
 
+
+    private:
+
         static void yTopClipping(std::vector<toolkit::Point4i>& intermediateVertices, int height, int width, std::vector<toolkit::Point4i>& finalVertices)
         {
             //Limite de y superior
@@ -155,7 +158,6 @@ namespace RenderModel
             }
         }
 
-    private:
 
         static void resetClippingVector(vector< Point4i >& intermediateVertices, vector< Point4i >& finalVertices)
         {

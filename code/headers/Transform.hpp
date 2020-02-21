@@ -58,6 +58,7 @@ namespace RenderModel {
 
         Transform(Point3f position, Point3f rotation, float scale);
         const Transformation3f getTransformation();
+        void addDisplacement(Point3f displacememnt);
 
     };
 

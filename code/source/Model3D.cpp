@@ -40,7 +40,7 @@ RenderModel::Model3D::~Model3D()
 
 }
 
-void RenderModel::Model3D::setUpdateFunction(std::function<void(Transform*)> _UpdateFunction)
+void RenderModel::Model3D::setUpdateFunction(std::function<void(Model3D*)> _UpdateFunction)
 {
 
     UpdateFunction = _UpdateFunction;
@@ -84,6 +84,9 @@ void RenderModel::Model3D::loadObj(const char* path)
             material_list.push_back(shared_ptr<Material>(new Material(Ka, Kd, Ks, Ke)));
         }
 
+        // Offset de los indices de los triangulos
+        int indexOffset = 0;
+
         // En cada mesh añadimos los indices de sus vertices
         // Tambien guardamos los triangulos que forman sus caras
         for (int s = 0; s < shapes.size(); s++)
@@ -92,8 +95,7 @@ void RenderModel::Model3D::loadObj(const char* path)
             vector<int> materialIndices;
 
             indices.resize(shapes[s].mesh.indices.size());
-            // Offset de los indices de los triangulos
-            int indexOffset = 0;
+            
 
             for (int index = 0; index < indices.size(); index++)
             {
@@ -202,7 +204,7 @@ void RenderModel::Model3D::update(float t, View& view)
 {
 
     if (UpdateFunction)
-        UpdateFunction(&transform);
+        UpdateFunction(this);
 
 
     applyTransformation();
@@ -228,7 +230,7 @@ RenderModel::Model3D::Color RenderModel::Model3D::getIluminatedColor(int indice)
 {
 
     vec3f N = vec3<float>::toVec3f(transformed_normals[indice]).normalize();
-    vec3f L = (vec3<float>::toVec3f(transformed_vertices[indice]) - vec3<float>::toVec3f(view->Light->position)).normalize();
+    vec3f L = vec3<float>::toVec3f(view->Light->getDirection(transformed_vertices[indice]) ).normalize();
     vec3f vecColor = vec3<float>::toVec3f(original_colors[indice]);
 
     if (material_list.size() > 0)

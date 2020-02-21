@@ -11,7 +11,7 @@
 
 #include "../headers/View.hpp"
 #include "../headers/SutherlandHodgmanClipping.hpp"
-#include "../headers/PointLight.hpp"
+#include "../headers/Light.hpp"
 #include <Vector.hpp>
 
 using namespace toolkit;
@@ -20,7 +20,7 @@ using toolkit::Point4f;
 namespace RenderModel
 {
 
-    View::View(int width, int height, Camera _camera, PointLight&_light)
+    View::View(int width, int height, Camera _camera, RenderModel::Light &_light)
         :
         width(width),
         height(height),

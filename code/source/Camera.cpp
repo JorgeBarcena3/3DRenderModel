@@ -14,7 +14,6 @@ RenderModel::Camera::~Camera()
 
 void RenderModel::Camera::update(float t)
 {
- 
 }
 
 const toolkit::Projection3f RenderModel::Camera::getCameraProjection()
@@ -24,10 +23,8 @@ const toolkit::Projection3f RenderModel::Camera::getCameraProjection()
 
 const toolkit::Transformation3f RenderModel::Camera::getInverseTransform()
 {
-    //Deberia estar en el update
-
-    //std::vector<float> displacement = transform.translation.getDisplacement();
-    //transform.translation.set(toolkit::Vector3f({ displacement[0] + 0.01f, displacement[1], displacement[2] }));
+    //Deberia ir en el update 
+    //transform.addDisplacement(Point3f({ 0.1f, 0.f, 0.f }));
 
     Transformation3f T = transform.getTransformation();
 
