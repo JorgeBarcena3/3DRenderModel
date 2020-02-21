@@ -12,10 +12,8 @@
 
 using namespace toolkit;
 
-RenderModel::Mesh::Mesh(vector<int>_meshIndices, vector<int> _normalIndices, vector<int>  material) :
-    meshIndices(_meshIndices),
-    normalIndices(_normalIndices),
-    materialIndices(material)
+RenderModel::Mesh::Mesh(vector<int> _indices) :
+    indices(_indices)
 {
 }
 
@@ -35,20 +33,20 @@ void RenderModel::Mesh::render(View& view, Model3D& model)
     Translation3f    translation = Translation3f(float(view.width / 2), float(view.height / 2), 0.f);
     Transformation3f transformation = translation * scaling;
 
-    for (int i = 0; i < meshIndices.size(); i++)
+    for (int i = 0; i < indices.size(); i++)
     {
-        model.display_vertices[meshIndices.at(i)] = Point4i(Matrix44f(transformation) * Matrix41f(model.transformed_vertices[meshIndices.at(i)]));
+        model.display_vertices[indices.at(i)] = Point4i(Matrix44f(transformation) * Matrix41f(model.transformed_vertices[indices.at(i)]));
     }
 
 
-    for (int* indices = meshIndices.data(), *end = indices + meshIndices.size(); indices < end; indices += 3)
+    for (int* index = indices.data(), *end = index + indices.size(); index < end; index += 3)
     {
-        if (is_frontface(model.transformed_vertices.data(), indices))
+        if (is_frontface(model.transformed_vertices.data(), index))
         {
-            vector< Point4i > display_vertices_clipped = view.clip(model.display_vertices.data(), indices, indices + 3);
+            vector< Point4i > display_vertices_clipped = view.clip(model.display_vertices.data(), index, index + 3);
 
             // Se establece el color del polígono a partir del color de su primer vértice:
-            view.rasterizer.set_color(model.transformed_colors[*indices]);
+            view.rasterizer.set_color(model.transformed_colors[*index]);
 
             // Se rellena el polígono:
             const int clipIndice[] = { 0,1,2,3,4,5,6,7,8,9 };

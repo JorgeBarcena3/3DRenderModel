@@ -29,13 +29,11 @@ namespace RenderModel {
 
     private:
 
-        Index_Buffer               meshIndices;
-        Index_Buffer               normalIndices;
-        Index_Buffer               materialIndices;
+        Index_Buffer               indices;
 
     public:
 
-        Mesh(vector<int> meshIndices, vector<int> normalIndices, vector<int>  material);
+        Mesh(vector<int> indices);
         ~Mesh();
 
         void render(View& view, Model3D & model);

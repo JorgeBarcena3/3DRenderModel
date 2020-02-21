@@ -139,7 +139,7 @@ namespace RenderModel {
         void addChild(shared_ptr<Model3D> child);
         void update(float t, View& view);
         void paint(View& view);
-        Color getColor(int indices);
+        Color getIluminatedColor(int indices);
         Transformation3f getTransformation();
 
 

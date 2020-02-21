@@ -16,7 +16,7 @@
 using namespace toolkit;
 
 RenderModel::Model3D::Model3D(const char* _path, float _scale, Point3f _rotation, Point3f _position, shared_ptr<View> _view, shared_ptr<Model3D> _padre)
-    : transform ( Transform(_position, _rotation, _scale) )
+    : transform(Transform(_position, _rotation, _scale))
 {
     loadObj(_path);
 
@@ -27,7 +27,7 @@ RenderModel::Model3D::Model3D(const char* _path, float _scale, Point3f _rotation
         parent->addChild(shared_ptr<Model3D>(this));
     }
 
-    view = _view;   
+    view = _view;
 
     applyTransformation();
 
@@ -66,13 +66,11 @@ void RenderModel::Model3D::loadObj(const char* path)
 
     if (ret) //Colocamos los datos necesarios
     {
-        vector< vector<float> > vertices_vector;
-        vector< vector<float> > normals_vector;
-        vector< vector<float> > originalColors;
-        vector< vector<int  > > trianglesIndex;
-        vector< vector<int  > > normalsIndex;
+        if (attrib.normals.size() == 0) throw "Este modelo no tiene normales";
+        if (attrib.vertices.size() == 0) throw "Este modelo no tiene vertices";
+        //if (attrib.colors.size()   == 0) throw "Este modelo no tiene colores";
 
-        //Añadimos los materiales
+        //Añadimos los materiales si los hay
         for (int m = 0; m < materials.size(); m++)
         {
             Color Ka, Kd, Ke, Ks;
@@ -88,139 +86,66 @@ void RenderModel::Model3D::loadObj(const char* path)
         // Tambien guardamos los triangulos que forman sus caras
         for (int s = 0; s < shapes.size(); s++)
         {
-            vector<int> meshIndices;
+            vector<int> indices;
             vector<int> materialIndices;
 
-            // Offset de los indices de los trianguloas
-            int triangleIndiceOffset = 0;
-            int normalsIndiceOffset = 0;
+            indices.resize(shapes[s].mesh.indices.size());
+            // Offset de los indices de los triangulos
+            int indexOffset = 0;
 
-            for (int f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++)
+            for (int index = 0; index < indices.size(); index++)
             {
+                int vertexIndex = shapes[s].mesh.indices[index].vertex_index;
+                int normalIndex = shapes[s].mesh.indices[index].normal_index;
 
-                int facesPoligon = shapes[s].mesh.num_face_vertices[f];
-
-                trianglesIndex.push_back(vector<int>(facesPoligon));
-                trianglesIndex[trianglesIndex.size() - 1][0] = (shapes[s].mesh.indices[triangleIndiceOffset++].vertex_index);
-                trianglesIndex[trianglesIndex.size() - 1][1] = (shapes[s].mesh.indices[triangleIndiceOffset++].vertex_index);
-                trianglesIndex[trianglesIndex.size() - 1][2] = (shapes[s].mesh.indices[triangleIndiceOffset++].vertex_index);
-
-                normalsIndex.push_back(vector<int>(facesPoligon));
-                normalsIndex[normalsIndex.size() - 1][0] = (shapes[s].mesh.indices[normalsIndiceOffset++].normal_index);
-                normalsIndex[normalsIndex.size() - 1][1] = (shapes[s].mesh.indices[normalsIndiceOffset++].normal_index);
-                normalsIndex[normalsIndex.size() - 1][2] = (shapes[s].mesh.indices[normalsIndiceOffset++].normal_index);
-
-                materialIndices.push_back(shapes[s].mesh.material_ids[f]);
-
-            }
-
-            // Se generan los índices de los triángulos
-            int number_of_triangles = trianglesIndex.size();
-
-            Index_Buffer meshVerices(number_of_triangles * (int)3);
-            Index_Buffer meshNormals(number_of_triangles * (int)3);
-
-            Index_Buffer::iterator mesh_indices_iterator = meshVerices.begin();
-            Index_Buffer::iterator mesh_normals_indices_iterator = meshNormals.begin();
-
-            for (int triangle_index = 0; triangle_index < number_of_triangles; triangle_index++)
-            {
-                *mesh_indices_iterator++ = trianglesIndex[triangle_index][0];
-                *mesh_indices_iterator++ = trianglesIndex[triangle_index][1];
-                *mesh_indices_iterator++ = trianglesIndex[triangle_index][2];
-
-                *mesh_normals_indices_iterator++ = normalsIndex[triangle_index][0];
-                *mesh_normals_indices_iterator++ = normalsIndex[triangle_index][1];
-                *mesh_normals_indices_iterator++ = normalsIndex[triangle_index][2];
-            }
-
-
-            //Añadimos las distintas meshes con los vertices
-            meshList.push_back(shared_ptr<Mesh>(new Mesh(meshVerices, meshNormals, materialIndices)));
-
-            // Vertices, colores, normales... del modelo 3D
-
-            int numeroVertices = attrib.GetVertices().size() / 3;
-            int verticesoffset = 0;
-            int normalsOffset = 0;
-            int colorOffset = 0;
-
-            for (int i = 0; i < numeroVertices; i++)
-            {
-
-                tinyobj::index_t idx = shapes[s].mesh.indices[normalsOffset + i];
-
-                vertices_vector.push_back(
-                    vector<float>({
-                           attrib.vertices[verticesoffset++],
-                           attrib.vertices[verticesoffset++],
-                           attrib.vertices[verticesoffset++],
+                /********
+                 VERTICES
+                *********/
+                original_vertices.push_back(
+                    Vertex({
+                           attrib.vertices[3 * vertexIndex + 0],
+                           attrib.vertices[3 * vertexIndex + 1],
+                           attrib.vertices[3 * vertexIndex + 2],
                            1.f
                         }));
 
-
+                /********
+                 NORMALES
+                *********/
                 original_normals.push_back(
                     Point4f({
-                           attrib.normals[3 * idx.normal_index + 0],
-                           attrib.normals[3 * idx.normal_index + 1],
-                           attrib.normals[3 * idx.normal_index + 2],
-                           1.f
+                           attrib.normals[3 * normalIndex + 0],
+                           attrib.normals[3 * normalIndex + 1],
+                           attrib.normals[3 * normalIndex + 2],
+                           0
                         }));
 
-
-
-                originalColors.push_back(
-                    vector<float>({
-                          floorf(rand() % (255 - 1) + 1) , // attrib.colors[colorOffset++],
-                          floorf(rand() % (255 - 1) + 1) , // attrib.colors[colorOffset++],
-                          floorf(rand() % (255 - 1) + 1) // attrib.colors[colorOffset++],
-                        })
+                /********
+                 COLORES
+                *********/
+                original_colors.push_back(Color());
+                original_colors[original_colors.size() - 1].set(
+                    175,//floorf(rand() % (255 - 1) + 1) , // attrib.colors[colorOffset++],
+                    175,//floorf(rand() % (255 - 1) + 1) , // attrib.colors[colorOffset++],
+                    175 //floorf(rand() % (255 - 1) + 1) // attrib.colors[colorOffset++],
                 );
 
-
-                normalsOffset += 3;
-
+                indices[index] = indexOffset + index;
             }
 
+            indexOffset += indices.size();
+
+            //Añadimos las distintas meshes con los vertices
+            meshList.push_back(shared_ptr<Mesh>(new Mesh(indices)));
+
+
+            //Reajustamos los size de los arrays
             transformed_normals.resize(original_normals.size());
-            // Se cargan en un búffer los datos del array:
-
-            int lastVertex = original_vertices.size();
-            int number_of_vertices = original_vertices.size() + vertices_vector.size();
-
-            original_vertices.resize(number_of_vertices);
-
-            for (int index = lastVertex; index < number_of_vertices; index++)
-            {
-                original_vertices[index] = Vertex({
-                     vertices_vector[index].at(0),
-                     vertices_vector[index].at(1),
-                     vertices_vector[index].at(2),
-                     vertices_vector[index].at(3)
-                    });
-
-            }
-
-            transformed_vertices.resize(number_of_vertices);
-            display_vertices.resize(number_of_vertices);
-
-            // Se definen los datos de color de los vértices:
-
-            lastVertex = original_colors.size();
-            int number_of_colors = original_colors.size() + originalColors.size();
-
-            assert(number_of_colors == number_of_vertices);             // Debe haber el mismo número
-                                                                        // de colores que de vértices
-            original_colors.resize(number_of_colors);
-            transformed_colors.resize(number_of_colors);
-
-            for (int index = lastVertex; index < number_of_colors; index++)
-            {
-                original_colors[index].set((int)originalColors[index][0], (int)originalColors[index][1], (int)originalColors[index][2]);
-            }
+            transformed_vertices.resize(original_vertices.size());
+            display_vertices.resize(original_vertices.size());
+            transformed_colors.resize(original_colors.size());
 
         }
-
 
     }
 }
@@ -228,7 +153,7 @@ void RenderModel::Model3D::loadObj(const char* path)
 void RenderModel::Model3D::applyTransformation()
 {
     Transformation3f transformation = view->mainCamera.getCameraProjection()
-                    * getTransformation();
+        * getTransformation();
 
     // Se transforman todos los vértices usando la matriz de transformación resultante:
 
@@ -250,6 +175,7 @@ void RenderModel::Model3D::applyTransformation()
         vertex[3] = 1.f;
 
         //Normales
+
         Vertex& Normalvertex = transformed_normals[index] = Matrix44f(transformation) * Matrix41f(original_normals[index]);
 
         divisor = 1.f / Normalvertex[3];
@@ -258,8 +184,8 @@ void RenderModel::Model3D::applyTransformation()
         Normalvertex[2] *= divisor;
         Normalvertex[3] = 1.f;
 
-        transformed_colors[index] = getColor(index);
-       
+        transformed_colors[index] = getIluminatedColor(index);
+
     }
 
 }
@@ -274,7 +200,7 @@ void RenderModel::Model3D::update(float t, View& view)
 
     if (UpdateFunction)
         UpdateFunction(&transform);
-    
+
 
     applyTransformation();
 
@@ -284,7 +210,7 @@ void RenderModel::Model3D::paint(View& view)
 {
     for (int index = 0; index < transformed_colors.size(); index++)
     {
-        transformed_colors[index] = getColor(index);
+        transformed_colors[index] = getIluminatedColor(index);
     }
 
     for (auto mesh : meshList)
@@ -295,28 +221,17 @@ void RenderModel::Model3D::paint(View& view)
 }
 
 
-RenderModel::Model3D::Color RenderModel::Model3D::getColor(int indice)
+RenderModel::Model3D::Color RenderModel::Model3D::getIluminatedColor(int indice)
 {
 
-    vec3f vecColor;
+    vec3f N        = vec3<float>::toVec3f(transformed_normals[indice]).normalize();
+    vec3f L        = (vec3<float>::toVec3f(transformed_vertices[indice]) - vec3<float>::toVec3f(view->lightPosition)).normalize();
+    vec3f vecColor = vec3<float>::toVec3f(original_colors[indice]);
 
-    if (original_normals.size() > 0)
-    {
+    if (material_list.size() > 0)
+        vecColor *= material_list[0]->Kd.data.component.r;
 
-        vec3f N = vec3<float>::toVec3f(transformed_normals[indice]).normalize();
-        vec3f L = (vec3<float>::toVec3f(transformed_vertices[indice]) - vec3<float>::toVec3f(view->lightPosition)).normalize();
-        vecColor = vec3<float>::toVec3f(original_colors[indice]);
-
-        if (material_list.size() > 0)
-            vecColor *= material_list[0]->Kd.data.component.r;
-
-        vecColor *= std::max(0.f, dot(N, L));
-
-    }
-    else
-    {
-        vecColor = vec3<float>::toVec3f(original_colors[indice]);
-    }
+    vecColor *= std::max(0.f, dot(N, L));
 
     Model3D::Color myColor;
     myColor.set((float)vecColor.r, (float)vecColor.g, (float)vecColor.b);
