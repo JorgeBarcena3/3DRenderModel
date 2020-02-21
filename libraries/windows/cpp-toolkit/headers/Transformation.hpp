@@ -26,7 +26,7 @@
 
             typedef toolkit::Matrix< DIMENSION + 1, DIMENSION + 1, NUMERIC_TYPE > Matrix;
 
-        protected:
+        public:
 
             Matrix matrix;
 

@@ -76,7 +76,7 @@
 
             int size () const
             {
-                return (buffer.size ());
+                return ((int)buffer.size ());
             }
 
         public:

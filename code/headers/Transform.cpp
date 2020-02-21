@@ -15,5 +15,7 @@ RenderModel::Transform::Transform(Point3f _position, Point3f _rotation, float _s
 
 const toolkit::Transformation3f RenderModel::Transform::getTransformation()
 {
-    return (translation * rotation_x * rotation_y * rotation_z * scale);
+    Transformation3f rotation = rotation_z * rotation_y * rotation_x;
+
+    return (translation * scale * rotation);
 }

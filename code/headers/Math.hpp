@@ -425,17 +425,17 @@ public:
 
     };
 
-    static vec3<float> toVec3f( toolkit::Point3f& point)
+    static vec3<float> toVec3f(toolkit::Point3f& point)
     {
         return vec3<float>(point[0], point[1], point[2]);
     }
-    
+
     static vec3<float> toVec3f(Point4f& point)
     {
         return vec3<float>(point[0], point[1], point[2]);
     }
-   
-    static vec3<float> toVec3f(RenderModel::Model3D::Color & point)
+
+    static vec3<float> toVec3f(RenderModel::Model3D::Color& point)
     {
         return vec3<float>(point.data.component.r, point.data.component.g, point.data.component.b);
     }

@@ -70,16 +70,16 @@ void RenderModel::Model3D::loadObj(const char* path)
     {
         if (attrib.normals.size() == 0) throw "Este modelo no tiene normales";
         if (attrib.vertices.size() == 0) throw "Este modelo no tiene vertices";
-        //if (attrib.colors.size()   == 0) throw "Este modelo no tiene colores";
+        if (attrib.colors.size() == 0) throw "Este modelo no tiene colores";
 
         //Añadimos los materiales si los hay
         for (int m = 0; m < materials.size(); m++)
         {
             Color Ka, Kd, Ke, Ks;
-            Ka.set(materials[m].ambient[0], materials[m].ambient[1], materials[m].ambient[2]);
-            Kd.set(materials[m].diffuse[0], materials[m].diffuse[1], materials[m].diffuse[2]);
-            Ke.set(materials[m].emission[0], materials[m].emission[1], materials[m].emission[2]);
-            Ks.set(materials[m].specular[0], materials[m].specular[1], materials[m].specular[2]);
+            Ka.set((int) materials[m].ambient[0] * 255, (int)materials[m].ambient[1] * 255, (int)materials[m].ambient[2] * 255);
+            Kd.set((int)materials[m].diffuse[0] * 255, (int)materials[m].diffuse[1] * 255, (int)materials[m].diffuse[2] * 255);
+            Ke.set((int)materials[m].emission[0] * 255, (int)materials[m].emission[1] * 255, (int)materials[m].emission[2] * 255);
+            Ks.set((int)materials[m].specular[0] * 255, (int)materials[m].specular[1] * 255, (int)materials[m].specular[2] * 255);
 
             material_list.push_back(shared_ptr<Material>(new Material(Ka, Kd, Ks, Ke)));
         }
@@ -127,15 +127,15 @@ void RenderModel::Model3D::loadObj(const char* path)
                 *********/
                 original_colors.push_back(Color());
                 original_colors[original_colors.size() - 1].set(
-                    255,//floorf(rand() % (255 - 1) + 1) , // attrib.colors[colorOffset++],
-                    000,//floorf(rand() % (255 - 1) + 1) , // attrib.colors[colorOffset++],
-                    000//floorf(rand() % (255 - 1) + 1) // attrib.colors[colorOffset++],
+                    175,//(int)floor(rand() % (255 - 1) + 1) , // attrib.colors[colorOffset++] * 255,
+                    175,//(int)floor(rand() % (255 - 1) + 1) , // attrib.colors[colorOffset++] * 255,
+                    175//(int)floor(rand() % (255 - 1) + 1) //    attrib.colors[colorOffset++] * 255,
                 );
 
                 indices[index] = indexOffset + index;
             }
 
-            indexOffset += indices.size();
+            indexOffset += (int)indices.size();
 
             //Añadimos las distintas meshes con los vertices
             meshList.push_back(shared_ptr<Mesh>(new Mesh(indices)));
@@ -155,11 +155,12 @@ void RenderModel::Model3D::loadObj(const char* path)
 void RenderModel::Model3D::applyTransformation()
 {
     Transformation3f transformation = view->mainCamera.getCameraProjection()
-        * getTransformation();
+                                    * view->mainCamera.getInverseTransform()
+                                    * getTransformation();
 
     // Se transforman todos los vértices usando la matriz de transformación resultante:
 
-    for (int index = 0, number_of_vertices = original_vertices.size(); index < number_of_vertices; index++)
+    for (int index = 0, number_of_vertices = (int)original_vertices.size(); index < number_of_vertices; index++)
     {
         // Se multiplican todos los vértices originales con la matriz de transformación y
         // se guarda el resultado en otro vertex buffer:
@@ -226,17 +227,17 @@ void RenderModel::Model3D::paint(View& view)
 RenderModel::Model3D::Color RenderModel::Model3D::getIluminatedColor(int indice)
 {
 
-    vec3f N        = vec3<float>::toVec3f(transformed_normals[indice]).normalize();
-    vec3f L        = (vec3<float>::toVec3f(transformed_vertices[indice]) - vec3<float>::toVec3f(view->Light->position)).normalize();
+    vec3f N = vec3<float>::toVec3f(transformed_normals[indice]).normalize();
+    vec3f L = (vec3<float>::toVec3f(transformed_vertices[indice]) - vec3<float>::toVec3f(view->Light->position)).normalize();
     vec3f vecColor = vec3<float>::toVec3f(original_colors[indice]);
 
     if (material_list.size() > 0)
         vecColor *= material_list[0]->Kd.data.component.r;
 
-    vecColor *=  std::max(0.f, dot(N, L));
+    vecColor *= std::max(0.f, dot(N, L));
 
     Model3D::Color myColor;
-    myColor.set((float)vecColor.r, (float)vecColor.g, (float)vecColor.b);
+    myColor.set((int)vecColor.r, (int)vecColor.g, (int)vecColor.b);
 
     return myColor;
 

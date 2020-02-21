@@ -11,7 +11,7 @@ namespace RenderModel
     using toolkit::Point4f;
     using toolkit::Point4i;
 
-    static class SutherlandHodgmanClipping
+    class SutherlandHodgmanClipping
     {
         typedef Point4i  Vertexi;
         typedef Point4f  Vertex;
@@ -172,8 +172,8 @@ namespace RenderModel
             float b1 = A[0] - B[0];
             float c1 = a1 * (A[0]) + b1 * (A[1]);
 
-            float a2 = D[1] - C[1];
-            float b2 = C[0] - D[0];
+            float a2 = (float)(D[1] - C[1]);
+            float b2 = (float)(C[0] - D[0]);
             float c2 = a2 * (C[0]) + b2 * (C[1]);
 
 

@@ -1,6 +1,5 @@
 #include "..\headers\Mesh.hpp"
 #include "..\headers\View.hpp"
-#include "..\headers\Math.hpp"
 #include "..\headers\Model3D.hpp"
 #include "..\headers\Material.hpp"
 #include <Scaling.hpp>
