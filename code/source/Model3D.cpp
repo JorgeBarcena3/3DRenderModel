@@ -9,9 +9,11 @@
 #include "..\headers\Model3D.hpp"
 #include "..\headers\Camera.hpp"
 #include "../headers/View.hpp"
-#include "../headers/Mesh.h"
-#include "../headers/Material.h"
+#include "../headers/Mesh.hpp"
+#include "../headers/Material.hpp"
+#include "../headers/PointLight.hpp"
 #include "../headers/Math.hpp"
+
 
 using namespace toolkit;
 
@@ -125,9 +127,9 @@ void RenderModel::Model3D::loadObj(const char* path)
                 *********/
                 original_colors.push_back(Color());
                 original_colors[original_colors.size() - 1].set(
-                    175,//floorf(rand() % (255 - 1) + 1) , // attrib.colors[colorOffset++],
-                    175,//floorf(rand() % (255 - 1) + 1) , // attrib.colors[colorOffset++],
-                    175 //floorf(rand() % (255 - 1) + 1) // attrib.colors[colorOffset++],
+                    255,//floorf(rand() % (255 - 1) + 1) , // attrib.colors[colorOffset++],
+                    000,//floorf(rand() % (255 - 1) + 1) , // attrib.colors[colorOffset++],
+                    000//floorf(rand() % (255 - 1) + 1) // attrib.colors[colorOffset++],
                 );
 
                 indices[index] = indexOffset + index;
@@ -225,13 +227,13 @@ RenderModel::Model3D::Color RenderModel::Model3D::getIluminatedColor(int indice)
 {
 
     vec3f N        = vec3<float>::toVec3f(transformed_normals[indice]).normalize();
-    vec3f L        = (vec3<float>::toVec3f(transformed_vertices[indice]) - vec3<float>::toVec3f(view->lightPosition)).normalize();
+    vec3f L        = (vec3<float>::toVec3f(transformed_vertices[indice]) - vec3<float>::toVec3f(view->Light->position)).normalize();
     vec3f vecColor = vec3<float>::toVec3f(original_colors[indice]);
 
     if (material_list.size() > 0)
         vecColor *= material_list[0]->Kd.data.component.r;
 
-    vecColor *= std::max(0.f, dot(N, L));
+    vecColor *=  std::max(0.f, dot(N, L));
 
     Model3D::Color myColor;
     myColor.set((float)vecColor.r, (float)vecColor.g, (float)vecColor.b);

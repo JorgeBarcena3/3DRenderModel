@@ -29,6 +29,7 @@ namespace RenderModel
     using std::string;
     using std::shared_ptr;
     using toolkit::Point4f;
+    class PointLight;
 
 
     class View
@@ -39,6 +40,7 @@ namespace RenderModel
         typedef Color_Buffer_Rgba8888 Color_Buffer;
         typedef Color_Buffer::Color   Color;
         typedef map<string, shared_ptr<Model3D>>  Models3D;
+        
 
 
 
@@ -53,9 +55,9 @@ namespace RenderModel
 
     public:
 
-        Point3f lightPosition;
+        PointLight * Light;
 
-        View(int width, int height, Camera camera, Point3f lightPosition);
+        View(int width, int height, Camera camera, PointLight& lightPosition);
 
         void addModel(string name, Model3D model);
         void update(float t);

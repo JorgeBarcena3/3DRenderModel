@@ -1,4 +1,4 @@
-#include "..\headers\Material.h"
+#include "..\headers\Material.hpp"
 
 
 RenderModel::Material::Material(Model3D::Color _ka, Model3D::Color  _kd, Model3D::Color  _ks, Model3D::Color  _ke) :

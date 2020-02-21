@@ -11,6 +11,7 @@
 
 #include "../headers/View.hpp"
 #include "../headers/SutherlandHodgmanClipping.hpp"
+#include "../headers/PointLight.hpp"
 #include <Vector.hpp>
 
 using namespace toolkit;
@@ -19,14 +20,14 @@ using toolkit::Point4f;
 namespace RenderModel
 {
 
-    View::View(int width, int height, Camera _camera, Point3f _lightPosition)
+    View::View(int width, int height, Camera _camera, PointLight&_light)
         :
         width(width),
         height(height),
         Color_buffer(width, height),
         rasterizer(Color_buffer),
         mainCamera(_camera),
-        lightPosition(_lightPosition)
+        Light(&_light)
     {
 
     }

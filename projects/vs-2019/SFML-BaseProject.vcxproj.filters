@@ -28,6 +28,9 @@
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\code\headers\Transform.cpp" />
+    <ClCompile Include="..\..\code\source\PointLight.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\code\headers\Color_Buffer.hpp">
@@ -48,12 +51,6 @@
     <ClInclude Include="..\..\code\headers\Model3D.hpp">
       <Filter>headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\code\headers\Material.h">
-      <Filter>headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\code\headers\Mesh.h">
-      <Filter>headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\code\headers\Camera.hpp">
       <Filter>headers</Filter>
     </ClInclude>
@@ -64,6 +61,15 @@
       <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\code\headers\Transform.hpp">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\headers\PointLight.hpp">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\headers\Material.hpp">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\headers\Mesh.hpp">
       <Filter>headers</Filter>
     </ClInclude>
   </ItemGroup>

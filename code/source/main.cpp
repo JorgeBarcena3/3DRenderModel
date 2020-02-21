@@ -10,6 +10,7 @@
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include "../headers/View.hpp"
+#include "../headers/PointLight.hpp"
 #include <SFML/Window.hpp>
 #include <SFML/OpenGL.hpp>
 
@@ -55,15 +56,17 @@ int main ()
     Window window(VideoMode(window_width, window_height), "3D Render Model", Style::Titlebar | Style::Close, ContextSettings(32));
 
     Camera camera(5, 15, 20, float(window_width) / float(window_height), toolkit::Point3f({0,0,0}), toolkit::Point3f({ 0,0,0 }));
-    View   view(window_width, window_height, camera, Point3f({ 2,2,0 }));
 
-    view.addModel("Pato", Model3D("..//..//assets//models//bird//12248_Bird_v1_L2.obj", 0.03f, Point3f({ -90,0,0 }), Point3f({ 0,  -1, -10 }), shared_ptr<View>(new View(view)), shared_ptr<Model3D>( nullptr)));
-    //view.addModel("SpiderMan", Model3D("..//..//assets//models//spider-man.obj", 0.08f, Point3f({ 0,0,0 }), Point3f({ 0,  0, -10 }), shared_ptr<View>(new View(view)), shared_ptr<Model3D>( nullptr)));
+    PointLight light(Point3f({ 2,2,0 }), View::Color({ 100,0,0 }));
+    View   view(window_width, window_height, camera, light);
+
+    //view.addModel("Pato", Model3D("..//..//assets//models//bird//12248_Bird_v1_L2.obj", 0.03f, Point3f({ -90,0,0 }), Point3f({ 0,  -1, -10 }), shared_ptr<View>(new View(view)), shared_ptr<Model3D>( nullptr)));
+    view.addModel("SpiderMan", Model3D("..//..//assets//models//spider-man.obj", 0.08f, Point3f({ 0,0,0 }), Point3f({ 0,  -1.5, -10 }), shared_ptr<View>(new View(view)), shared_ptr<Model3D>( nullptr)));
     //view.addModel("Sphere",  Model3D("..//..//assets//models//sphere.obj", 2, Point3f({ 0,0,0 }), Point3f({ 0, 0, -10 }), shared_ptr<View>(new View(view)), shared_ptr<Model3D>(nullptr)));
     //view.addModel("Cubo",  Model3D("..//..//assets//models//cube.obj", 1.5, Point3f({ 0,0,0 }), Point3f({ 0, 0, -10 }), shared_ptr<View>(new View(view)), shared_ptr<Model3D>(nullptr)));
     
     
-    view.models3D["Pato"]->setUpdateFunction(rotateZUpdate);
+    view.models3D["SpiderMan"]->setUpdateFunction(rotateYUpdate);
     //view.models3D["SpiderMan"]->setUpdateFunction(rotateXUpdate);
     //view.models3D["Pato"]->setUpdateFunction(rotateZUpdate);
 
