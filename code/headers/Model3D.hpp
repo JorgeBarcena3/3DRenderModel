@@ -19,6 +19,7 @@ namespace RenderModel {
     using std::shared_ptr;
     using std::unique_ptr;
     using std::vector;
+    using toolkit::Point2f;
     using toolkit::Point4f;
     using toolkit::Point4i;
     using toolkit::Point3f;
@@ -69,6 +70,7 @@ namespace RenderModel {
         * Normales del modelo
         */
         Normals_Buffer      original_normals;
+
 
         /*
         * Normales del modelo

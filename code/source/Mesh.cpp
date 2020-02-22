@@ -28,7 +28,7 @@ void RenderModel::Mesh::render(View& view, Model3D& model)
        // rango de int (que es lo que espera fill_convex_polygon_z_buffer).
 
 
-    Scaling3f        scaling = Scaling3f(float(view.width / 2), float(view.height / 2), 100000000.f);
+    Scaling3f        scaling = Scaling3f(float(view.width / 2), float(view.height / 2), 10000.f);
     Translation3f    translation = Translation3f(float(view.width / 2), float(view.height / 2), 0.f);
     Transformation3f transformation = translation * scaling;
 

@@ -25,6 +25,11 @@ const toolkit::Transformation3f RenderModel::Camera::getInverseTransform()
 {
     //Deberia ir en el update 
     //transform.addDisplacement(Point3f({ 0.1f, 0.f, 0.f }));
+    static float angle = 0;
+    angle += 0.01;
+    //transform.rotation_y.set< Rotation3f::AROUND_THE_Y_AXIS >(angle * 3.14159265359f / 180);
+    //transform.rotation_x.set< Rotation3f::AROUND_THE_X_AXIS >(angle * 3.14159265359f / 180);
+    //transform.rotation_z.set< Rotation3f::AROUND_THE_Z_AXIS >(angle * 3.14159265359f / 180);
 
     Transformation3f T = transform.getTransformation();
 
@@ -58,22 +63,22 @@ const toolkit::Transformation3f RenderModel::Camera::getInverseTransform()
 
     toolkit::Transformation3f::Matrix minv;
 
-    minv[0][0] = det * (minv[1][1] * A2323 - minv[1][2] * A1323 + minv[1][3] * A1223);
+    minv[0][0] = det *  (minv[1][1] * A2323 - minv[1][2] * A1323 + minv[1][3] * A1223);
     minv[0][1] = det * -(minv[0][1] * A2323 - minv[0][2] * A1323 + minv[0][3] * A1223);
-    minv[0][2] = det * (minv[0][1] * A2313 - minv[0][2] * A1313 + minv[0][3] * A1213);
+    minv[0][2] = det *  (minv[0][1] * A2313 - minv[0][2] * A1313 + minv[0][3] * A1213);
     minv[0][3] = det * -(minv[0][1] * A2312 - minv[0][2] * A1312 + minv[0][3] * A1212);
     minv[1][0] = det * -(minv[1][0] * A2323 - minv[1][2] * A0323 + minv[1][3] * A0223);
-    minv[1][1] = det * (minv[0][0] * A2323 - minv[0][2] * A0323 + minv[0][3] * A0223);
+    minv[1][1] = det *  (minv[0][0] * A2323 - minv[0][2] * A0323 + minv[0][3] * A0223);
     minv[1][2] = det * -(minv[0][0] * A2313 - minv[0][2] * A0313 + minv[0][3] * A0213);
-    minv[1][3] = det * (minv[0][0] * A2312 - minv[0][2] * A0312 + minv[0][3] * A0212);
-    minv[2][0] = det * (minv[1][0] * A1323 - minv[1][1] * A0323 + minv[1][3] * A0123);
+    minv[1][3] = det *  (minv[0][0] * A2312 - minv[0][2] * A0312 + minv[0][3] * A0212);
+    minv[2][0] = det *  (minv[1][0] * A1323 - minv[1][1] * A0323 + minv[1][3] * A0123);
     minv[2][1] = det * -(minv[0][0] * A1323 - minv[0][1] * A0323 + minv[0][3] * A0123);
-    minv[2][2] = det * (minv[0][0] * A1313 - minv[0][1] * A0313 + minv[0][3] * A0113);
+    minv[2][2] = det *  (minv[0][0] * A1313 - minv[0][1] * A0313 + minv[0][3] * A0113);
     minv[2][3] = det * -(minv[0][0] * A1312 - minv[0][1] * A0312 + minv[0][3] * A0112);
     minv[3][0] = det * -(minv[1][0] * A1223 - minv[1][1] * A0223 + minv[1][2] * A0123);
-    minv[3][1] = det * (minv[0][0] * A1223 - minv[0][1] * A0223 + minv[0][2] * A0123);
+    minv[3][1] = det *  (minv[0][0] * A1223 - minv[0][1] * A0223 + minv[0][2] * A0123);
     minv[3][2] = det * -(minv[0][0] * A1213 - minv[0][1] * A0213 + minv[0][2] * A0113);
-    minv[3][3] = det * (minv[0][0] * A1212 - minv[0][1] * A0212 + minv[0][2] * A0112);
+    minv[3][3] = det *  (minv[0][0] * A1212 - minv[0][1] * A0212 + minv[0][2] * A0112);
 
     return Transformation3f(minv);
 

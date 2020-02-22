@@ -23,29 +23,29 @@
 using namespace sf;
 using namespace RenderModel;
 
-void rotateUpdate(Model3D * model)
+void rotateUpdate(Model3D* model)
 {
     static float angle = 0.f;
 
     angle += 0.01f;
 
-     model->transform.rotation_y.set< Rotation3f::AROUND_THE_Y_AXIS >(angle * PI / 180);
-     model->transform.rotation_x.set< Rotation3f::AROUND_THE_X_AXIS >(angle * PI / 180);
-     model->transform.rotation_z.set< Rotation3f::AROUND_THE_Z_AXIS >(angle * PI / 180);
+    model->transform.rotation_y.set< Rotation3f::AROUND_THE_Y_AXIS >(angle * PI / 180);
+    model->transform.rotation_x.set< Rotation3f::AROUND_THE_X_AXIS >(angle * PI / 180);
+    model->transform.rotation_z.set< Rotation3f::AROUND_THE_Z_AXIS >(angle * PI / 180);
 
 }
 
-void rotateYUpdate(Model3D * model)
+void rotateYUpdate(Model3D* model)
 {
     static float angle = 0.f;
 
-    angle += 1.f;
+    angle += 0.5f;
 
     model->transform.rotation_y.set< Rotation3f::AROUND_THE_Y_AXIS >(angle * PI / 180);
 
 }
 
-void rotateXUpdate(Model3D * model)
+void rotateXUpdate(Model3D* model)
 {
     static float angle = 0.f;
 
@@ -54,7 +54,7 @@ void rotateXUpdate(Model3D * model)
     model->transform.rotation_x.set< Rotation3f::AROUND_THE_X_AXIS >(angle * PI / 180);
 }
 
-void rotateZUpdate(Model3D * model)
+void rotateZUpdate(Model3D* model)
 {
     static float angle = 0.f;
 
@@ -63,7 +63,7 @@ void rotateZUpdate(Model3D * model)
     model->transform.rotation_z.set< Rotation3f::AROUND_THE_Z_AXIS >(angle * PI / 180);
 }
 
-void displaceInX(Model3D * model)
+void displaceInX(Model3D* model)
 {
     model->transform.addDisplacement(Point3f({ 0.1f, 0.f, 0.f }));
 }
@@ -78,6 +78,77 @@ void displaceInZ(Model3D* model)
     model->transform.addDisplacement(Point3f({ 0.f, 0.f, 0.1f }));
 }
 
+void configScene(View& view)
+{
+    //view.addModel("Island",                         // Nombre
+    //    Model3D(                                    // Modelo
+    //        "..//..//assets//models//island.obj",   // Path
+    //        0.4f,                                  // Scale
+    //        Point3f({ 0,0,0 }),                      // Rotation
+    //        Point3f({ -0, -4, -10 }),                // Position
+    //        shared_ptr<View>(new View(view)),       // Vista
+    //        shared_ptr<Model3D>(nullptr)            // Padre
+    //    )
+    //);  
+    //
+    //view.addModel("Tree_1",                         // Nombre
+    //    Model3D(                                    // Modelo
+    //        "..//..//assets//models//lowpolytree.obj",   // Path
+    //        0.2f,                                  // Scale
+    //        Point3f({ 0,0,0 }),                      // Rotation
+    //        Point3f({ 0.8, 0, -10 }),                // Position
+    //        shared_ptr<View>(new View(view)),       // Vista
+    //        shared_ptr<Model3D>(nullptr)            // Padre
+    //    )
+    //);
+
+    //view.addModel("Tree_2",                         // Nombre
+    //    Model3D(                                    // Modelo
+    //        "..//..//assets//models//lowpolytree.obj",   // Path
+    //        0.08f,                                  // Scale
+    //        Point3f({ 0,0,0 }),                      // Rotation
+    //        Point3f({ -0.4, -0.2, -10 }),                // Position
+    //        shared_ptr<View>(new View(view)),       // Vista
+    //        shared_ptr<Model3D>(nullptr)            // Padre
+    //    )
+    //);
+
+    //view.addModel("Pato",                         // Nombre
+    //    Model3D(                                    // Modelo
+    //        "..//..//assets//models//10602_Rubber_Duck_v1_L3.obj",   // Path
+    //        0.03f,                                  // Scale
+    //        Point3f({ -90,0,0 }),                      // Rotation
+    //        Point3f({ -0.4, -0.3, -10 }),                // Position
+    //        shared_ptr<View>(new View(view)),       // Vista
+    //        shared_ptr<Model3D>(nullptr)            // Padre
+    //    )
+    //);    
+    //
+    //view.addModel("Tower",                         // Nombre
+    //    Model3D(                                    // Modelo
+    //        "..//..//assets//models//War_Tower.obj",   // Path
+    //        0.2f,                                  // Scale
+    //        Point3f({ 0,0,0 }),                      // Rotation
+    //        Point3f({ 0, -0.3, -9 }),                // Position
+    //        shared_ptr<View>(new View(view)),       // Vista
+    //        shared_ptr<Model3D>(nullptr)            // Padre
+    //    )
+    //);
+
+    view.addModel("Tree",                         // Nombre
+        Model3D(                                    // Modelo
+            "..//..//assets//models//lowpolytree.obj",   // Path
+            0.5f,                                  // Scale
+            Point3f({ 0,0,0 }),                      // Rotation
+            Point3f({ -0, -0, -10 }),                // Position
+            shared_ptr<View>(new View(view)),       // Vista
+            shared_ptr<Model3D>(nullptr)            // Padre
+        )
+    );
+
+    view.models3D["Tree"]->setUpdateFunction(rotateYUpdate);
+}
+
 int main()
 {
     Window window(VideoMode(800, 600), "3D Render Model | Jorge Barcena Lumbreras", Style::Titlebar | Style::Close, ContextSettings(32));
@@ -87,19 +158,19 @@ int main()
         15,                                                       // Far
         20,                                                       // Fov
         float(window.getSize().x) / float(window.getSize().y),    // Ratio
-        toolkit::Point3f({ 0,0,0 }),                              // Position
-        toolkit::Point3f({ 0,0,0 })                               // Rotation
+        toolkit::Point3f({ 0, 0,0 }),                              // Position
+        toolkit::Point3f({ 0,-0,0 })                               // Rotation
     );
 
-    //PointLight light(
-    //    Point3f({ 0,0,-2 }),      // Postion
-    //    View::Color({ 100,0,0 })  // Color
-    //);
-
-    DirectionalLight light(
-        Point3f(  { -0.5,0, 1 }), // Direction
+    PointLight light(
+        Point3f({ 0,4,-2 }),      // Postion
         View::Color({ 100,0,0 })  // Color
     );
+
+    //DirectionalLight light(
+    //    Point3f(  { -0.5,0, 1 }), // Direction
+    //    View::Color({ 100,0,0 })  // Color
+    //);
 
     View view(
         window.getSize().x,   // Width
@@ -108,19 +179,8 @@ int main()
         light                 // Light
     );
 
-    view.addModel("Sphere",                         // Nombre
-        Model3D(                                    // Modelo
-            "..//..//assets//models//sphere.obj",   // Path
-            2.00f,                                  // Scale
-            Point3f({ -70,0,0 }),                   // Rotation
-            Point3f({ -0, 0, -10 }),                // Position
-            shared_ptr<View>(new View(view)),       // Vista
-            shared_ptr<Model3D>(nullptr)            // Padre
-        )
-    );
-
-
-    //view.models3D["Sphere"]->setUpdateFunction(displaceInZ);
+    //Configuramos la escena a previsualizar
+    configScene(view);
 
     // Initialization:
 

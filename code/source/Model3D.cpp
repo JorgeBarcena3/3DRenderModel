@@ -76,13 +76,25 @@ void RenderModel::Model3D::loadObj(const char* path)
         for (int m = 0; m < materials.size(); m++)
         {
             Color Ka, Kd, Ke, Ks;
-            Ka.set((int) materials[m].ambient[0] * 255, (int)materials[m].ambient[1] * 255, (int)materials[m].ambient[2] * 255);
-            Kd.set((int)materials[m].diffuse[0] * 255, (int)materials[m].diffuse[1] * 255, (int)materials[m].diffuse[2] * 255);
-            Ke.set((int)materials[m].emission[0] * 255, (int)materials[m].emission[1] * 255, (int)materials[m].emission[2] * 255);
-            Ks.set((int)materials[m].specular[0] * 255, (int)materials[m].specular[1] * 255, (int)materials[m].specular[2] * 255);
+            Ka.set((int)(materials[m].ambient[0] * 255), (int)(materials[m].ambient[1] * 255), (int)(materials[m].ambient[2] * 255));
+            Kd.set((int)(materials[m].diffuse[0] * 255), (int)(materials[m].diffuse[1] * 255), (int)(materials[m].diffuse[2] * 255));
+            Ke.set((int)(materials[m].emission[0] * 255), (int)(materials[m].emission[1] * 255), (int)(materials[m].emission[2] * 255));
+            Ks.set((int)(materials[m].specular[0] * 255), (int)(materials[m].specular[1] * 255), (int)(materials[m].specular[2] * 255));
 
             material_list.push_back(shared_ptr<Material>(new Material(Ka, Kd, Ks, Ke)));
         }
+
+        if (materials.size() == 0)
+        {
+            Color Ka, Kd, Ke, Ks;
+            Ka.set(175, 175, 175);
+            Kd.set(175, 175, 175);
+            Ke.set(175, 175, 175);
+            Ks.set(175, 175, 175);
+
+            material_list.push_back(shared_ptr<Material>(new Material(Ka, Kd, Ks, Ke)));
+        }
+
 
         // Offset de los indices de los triangulos
         int indexOffset = 0;
@@ -95,12 +107,17 @@ void RenderModel::Model3D::loadObj(const char* path)
             vector<int> materialIndices;
 
             indices.resize(shapes[s].mesh.indices.size());
-            
 
-            for (int index = 0; index < indices.size(); index++)
+
+            for (int index = 0, matIndex = 0; index < indices.size(); index++)
             {
                 int vertexIndex = shapes[s].mesh.indices[index].vertex_index;
                 int normalIndex = shapes[s].mesh.indices[index].normal_index;
+
+                if (index % 3 == 0 && index != 0)
+                    matIndex++;
+
+                int materialIndex = shapes[s].mesh.material_ids[matIndex] == -1 ? 0 : shapes[s].mesh.material_ids[matIndex];
 
                 /********
                  VERTICES
@@ -129,10 +146,12 @@ void RenderModel::Model3D::loadObj(const char* path)
                 *********/
                 original_colors.push_back(Color());
                 original_colors[original_colors.size() - 1].set(
-                    175,//(int)floor(rand() % (255 - 1) + 1) , // attrib.colors[colorOffset++] * 255,
-                    175,//(int)floor(rand() % (255 - 1) + 1) , // attrib.colors[colorOffset++] * 255,
-                    175//(int)floor(rand() % (255 - 1) + 1) //    attrib.colors[colorOffset++] * 255,
+                    material_list[materialIndex]->Kd.data.component.r, //(int)floor(rand() % (255 - 1) + 1) , // attrib.colors[colorOffset++] * 255,
+                    material_list[materialIndex]->Kd.data.component.g, //(int)floor(rand() % (255 - 1) + 1) , // attrib.colors[colorOffset++] * 255,
+                    material_list[materialIndex]->Kd.data.component.b  //(int)floor(rand() % (255 - 1) + 1) //    attrib.colors[colorOffset++] * 255,
+
                 );
+
 
                 indices[index] = indexOffset + index;
             }
@@ -157,8 +176,8 @@ void RenderModel::Model3D::loadObj(const char* path)
 void RenderModel::Model3D::applyTransformation()
 {
     Transformation3f transformation = view->mainCamera.getCameraProjection()
-                                    * view->mainCamera.getInverseTransform()
-                                    * getTransformation();
+        * view->mainCamera.getInverseTransform()
+        * getTransformation();
 
     // Se transforman todos los vértices usando la matriz de transformación resultante:
 
@@ -188,8 +207,6 @@ void RenderModel::Model3D::applyTransformation()
         Normalvertex[1] *= divisor;
         Normalvertex[2] *= divisor;
         Normalvertex[3] = 1.f;
-
-        transformed_colors[index] = getIluminatedColor(index);
 
     }
 
@@ -230,11 +247,11 @@ RenderModel::Model3D::Color RenderModel::Model3D::getIluminatedColor(int indice)
 {
 
     vec3f N = vec3<float>::toVec3f(transformed_normals[indice]).normalize();
-    vec3f L = vec3<float>::toVec3f(view->Light->getDirection(transformed_vertices[indice]) ).normalize();
+    vec3f L = vec3<float>::toVec3f(view->Light->getDirection(transformed_vertices[indice])).normalize();
     vec3f vecColor = vec3<float>::toVec3f(original_colors[indice]);
 
-    if (material_list.size() > 0)
-        vecColor *= material_list[0]->Kd.data.component.r;
+    //if (material_list.size() > 0)
+    //    vecColor *= material_list[0]->Kd.data.component.r;
 
     vecColor *= std::max(0.f, dot(N, L));
 

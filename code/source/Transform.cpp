@@ -17,18 +17,21 @@ RenderModel::Transform::Transform(Point3f _position, Point3f _rotation, float _s
 
 const toolkit::Transformation3f RenderModel::Transform::getTransformation()
 {
-    Transformation3f rotation = rotation_z * rotation_y * rotation_x;
+    Transformation3f T = Transformation3f();
+    T = T * translation;
+    T = T * rotation_x * rotation_y * rotation_z;
+    T = T * scale;
 
-    return (translation * scale * rotation);
+    return T;
 }
 
 void RenderModel::Transform::addDisplacement(Point3f displacememnt)
 {
     std::vector<float> displacement = translation.getDisplacement();
-    translation.set(toolkit::Vector3f({ 
+    translation.set(toolkit::Vector3f({
         displacement[0] + displacememnt[0],
         displacement[1] + displacememnt[1],
-        displacement[2] + displacememnt[2] 
+        displacement[2] + displacememnt[2]
         })
     );
 }
