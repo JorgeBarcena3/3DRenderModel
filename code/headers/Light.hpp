@@ -1,10 +1,11 @@
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
  *                                                                             *
- *  Started by Ángel on december of 2013                                       *
+ *  Started by Jorge on February of 2020                                       *
  *                                                                             *
  *  This is free software released into the public domain.                     *
  *                                                                             *
- *  angel.rodriguez@esne.edu                                                   *
+ *  j.barcenalumbreras@gmail.com                                               *
  *                                                                             *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -16,6 +17,10 @@
 
 namespace RenderModel
 {
+
+    /*
+    * Administra la luz
+    */
     class Light
     {
     public:
@@ -24,13 +29,26 @@ namespace RenderModel
 
     protected:
 
+        /*
+        * Posicion de la luz
+        */
         toolkit::Point3f position;
+
+        /*
+        * Color de la luz
+        */
         Color            color;
 
     public:
 
+        /*
+        * Constructor de la luz
+        */
         Light(Point3f position, Color color);
 
+        /*
+        * Direccion de la luz a una posicion
+        */
         virtual toolkit::Point4f getDirection(toolkit::Point4f pointInWorld) = 0;
 
     };

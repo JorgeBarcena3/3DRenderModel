@@ -1,11 +1,11 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
  *                                                                             *
- *  Started by Ángel on december of 2013                                       *
+ *  Started by Jorge on February of 2020                                       *
  *                                                                             *
  *  This is free software released into the public domain.                     *
  *                                                                             *
- *  angel.rodriguez@esne.edu                                                   *
+ *  j.barcenalumbreras@gmail.com                                               *
  *                                                                             *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -18,15 +18,23 @@
 
 namespace RenderModel
 {
+
+    /*
+    * Administra las point lights
+    */
     class PointLight : public Light
     {
        
     public:
-       
-        PointLight(Point3f position, Color color);
-        
 
-        // Inherited via Light
+        /*
+        * Constructor de la luz
+        */       
+        PointLight(Point3f position, Color color);        
+
+        /*
+        * Devuelve la direccion de la luz
+        */
         virtual toolkit::Point4f getDirection(toolkit::Point4f pointInWorld) override;
 
     };

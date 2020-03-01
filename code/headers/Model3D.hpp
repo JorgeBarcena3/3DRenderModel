@@ -1,3 +1,14 @@
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
+ *                                                                             *
+ *  Started by Jorge on February of 2020                                       *
+ *                                                                             *
+ *  This is free software released into the public domain.                     *
+ *                                                                             *
+ *  j.barcenalumbreras@gmail.com                                               *
+ *                                                                             *
+\* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 #ifndef MODEL3D_HEADER
 #define MODEL3D_HEADER
 
@@ -44,9 +55,9 @@ namespace RenderModel {
         typedef Color_Buffer::Color              Color;
         typedef Point4f                          Vertex;
         typedef vector< Vertex >                 Vertex_Buffer;
-        typedef vector<int    >                 Index_Buffer;
+        typedef vector< int    >                 Index_Buffer;
         typedef vector< Color  >                 Vertex_Colors;
-        typedef vector< Vertex  >               Normals_Buffer;
+        typedef vector< Vertex  >                Normals_Buffer;
         typedef vector< shared_ptr<Material> >   Materials_Buffer;
 
         /*
@@ -105,17 +116,7 @@ namespace RenderModel {
         /*
         * Lista de mesh que componen el modelo
         */
-        vector< shared_ptr< Mesh > > meshList;
-
-        /*
-        * Referencia a la vista a la que pertenece el modelo
-        */
-        shared_ptr< View >     view;
-
-        /*
-        * Padre de la del modelo 3D
-        */
-        shared_ptr<Model3D>   parent;
+        vector< shared_ptr< Mesh > > meshList;        
 
         /*
         * Funcion que se ejecutara en el update
@@ -125,25 +126,69 @@ namespace RenderModel {
     public:
 
         /*
+        * Padre de la del modelo 3D
+        */
+        Model3D* parent;
+
+        /*
         * Hijos que contiene el modelo 3D
         */
-        vector<shared_ptr<Model3D>>   childs;
+        vector<Model3D * >   childs;
 
 
     public:
 
-        Model3D(const char* path, float scale, Point3f rotation, Point3f position, shared_ptr<View> view, shared_ptr<Model3D> padre);
+        /*
+        * Crea un modelo 3D
+        */
+        Model3D(const char* path, float scale, Point3f rotation, Point3f position, View& view, Model3D * padre);
+
+        /*
+        * Destructor del modelo 3D
+        */
         ~Model3D();
 
+        /*
+        * Determina cual será la funcion de update del modelo
+        */
         void setUpdateFunction(std::function<void(Model3D*)> UpdateFunction);
-        void loadObj(const char* path);
-        void applyTransformation();
-        void addChild(shared_ptr<Model3D> child);
-        void update(float t, View& view);
-        void paint(View& view);
-        Color getIluminatedColor(int indices);
-        Transformation3f getTransformation();
 
+        /*
+        * Ejecuta el update
+        */
+        void update(float t, View& view);
+
+        /*
+        * Renderiza el modelo 3D
+        */
+        void paint(View& view);
+
+    private:
+        
+        /*
+        * Carga un obj
+        */
+        void loadObj(const char* path);
+
+        /*
+        * APlica las transformaciones a los vertices
+        */
+        void applyTransformation(View& view);
+
+        /*
+        * Añade un hijo al padre
+        */
+        void addChild(Model3D * child);
+
+        /*
+        * Obtiene el color de la iluminacion
+        */
+        Color getIluminatedColor(int indices, View& view);
+
+        /*
+        * Obtiene la transformacion total
+        */
+        Transformation3f getTransformation();
 
     };
 

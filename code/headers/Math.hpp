@@ -21,9 +21,12 @@
 #include <Point.hpp>
 #include "Color_Buffer_Rgba8888.hpp"
 #include "Model3D.hpp"
+#define PI 3.14159265359f
+
 
 using toolkit::Point3f;
 using toolkit::Point4f;
+
 
 /*** Implementacion de la clase de Vector2 con sus respectivos operandos
 */

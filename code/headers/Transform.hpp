@@ -56,8 +56,24 @@ namespace RenderModel {
 
     public:
 
+        /*
+        * Constructor de la clase matriz
+        */
         Transform(Point3f position, Point3f rotation, float scale);
+
+        /*
+        * Devuelve la matriz de transformacion
+        */
         const Transformation3f getTransformation();
+        
+        /*
+        * Devuelve la matriz de transformacion
+        */
+        const Transformation3f getInverseTransformation();
+
+        /*
+        * Añade un vector de desplazamiento a un objeto
+        */
         void addDisplacement(Point3f displacememnt);
 
     };

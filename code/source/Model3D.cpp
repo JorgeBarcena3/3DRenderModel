@@ -1,3 +1,14 @@
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
+ *                                                                             *
+ *  Started by Jorge on February of 2020                                       *
+ *                                                                             *
+ *  This is free software released into the public domain.                     *
+ *                                                                             *
+ *  j.barcenalumbreras@gmail.com                                               *
+ *                                                                             *
+\* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 #define TINYOBJLOADER_IMPLEMENTATION // define this in only *one* .cc
 #include "tiny_obj_loader.h"
 
@@ -8,16 +19,16 @@
 #include <Vector.hpp>
 #include "..\headers\Model3D.hpp"
 #include "..\headers\Camera.hpp"
-#include "../headers/View.hpp"
-#include "../headers/Mesh.hpp"
-#include "../headers/Material.hpp"
-#include "../headers/PointLight.hpp"
-#include "../headers/Math.hpp"
+#include "..\headers\View.hpp"
+#include "..\headers\Mesh.hpp"
+#include "..\headers\Material.hpp"
+#include "..\headers\PointLight.hpp"
+#include "..\headers\Math.hpp"
 
 
 using namespace toolkit;
 
-RenderModel::Model3D::Model3D(const char* _path, float _scale, Point3f _rotation, Point3f _position, shared_ptr<View> _view, shared_ptr<Model3D> _padre)
+RenderModel::Model3D::Model3D(const char* _path, float _scale, Point3f _rotation, Point3f _position, View& _view, Model3D * _padre)
     : transform(Transform(_position, _rotation, _scale))
 {
     loadObj(_path);
@@ -26,18 +37,21 @@ RenderModel::Model3D::Model3D(const char* _path, float _scale, Point3f _rotation
 
     if (parent != nullptr)
     {
-        parent->addChild(shared_ptr<Model3D>(this));
+        parent->addChild(this);
     }
 
-    view = _view;
-
-    applyTransformation();
+    applyTransformation(_view);
 
 }
 
 RenderModel::Model3D::~Model3D()
 {
-
+    for (size_t i = 0; i < childs.size(); i++)
+    {
+        delete childs[i];
+        
+    } 
+ 
 }
 
 void RenderModel::Model3D::setUpdateFunction(std::function<void(Model3D*)> _UpdateFunction)
@@ -75,24 +89,22 @@ void RenderModel::Model3D::loadObj(const char* path)
         //Añadimos los materiales si los hay
         for (int m = 0; m < materials.size(); m++)
         {
-            Color Ka, Kd, Ke, Ks;
+            Color Ka, Kd, Ks;
             Ka.set((int)(materials[m].ambient[0] * 255), (int)(materials[m].ambient[1] * 255), (int)(materials[m].ambient[2] * 255));
             Kd.set((int)(materials[m].diffuse[0] * 255), (int)(materials[m].diffuse[1] * 255), (int)(materials[m].diffuse[2] * 255));
-            Ke.set((int)(materials[m].emission[0] * 255), (int)(materials[m].emission[1] * 255), (int)(materials[m].emission[2] * 255));
             Ks.set((int)(materials[m].specular[0] * 255), (int)(materials[m].specular[1] * 255), (int)(materials[m].specular[2] * 255));
 
-            material_list.push_back(shared_ptr<Material>(new Material(Ka, Kd, Ks, Ke)));
+            material_list.push_back(shared_ptr<Material>(new Material(Ka, Kd, Ks)));
         }
 
         if (materials.size() == 0)
         {
-            Color Ka, Kd, Ke, Ks;
+            Color Ka, Kd, Ks;
             Ka.set(175, 175, 175);
             Kd.set(175, 175, 175);
-            Ke.set(175, 175, 175);
             Ks.set(175, 175, 175);
 
-            material_list.push_back(shared_ptr<Material>(new Material(Ka, Kd, Ks, Ke)));
+            material_list.push_back(shared_ptr<Material>(new Material(Ka, Kd, Ks)));
         }
 
 
@@ -173,10 +185,10 @@ void RenderModel::Model3D::loadObj(const char* path)
     }
 }
 
-void RenderModel::Model3D::applyTransformation()
+void RenderModel::Model3D::applyTransformation(View& view)
 {
-    Transformation3f transformation = view->mainCamera.getCameraProjection()
-        * view->mainCamera.getInverseTransform()
+    Transformation3f transformation = view.mainCamera.getCameraProjection()
+        * view.mainCamera.getInverseTransform()
         * getTransformation();
 
     // Se transforman todos los vértices usando la matriz de transformación resultante:
@@ -212,7 +224,7 @@ void RenderModel::Model3D::applyTransformation()
 
 }
 
-void RenderModel::Model3D::addChild(shared_ptr<Model3D> child)
+void RenderModel::Model3D::addChild(Model3D * child)
 {
     childs.push_back(child);
 }
@@ -224,7 +236,7 @@ void RenderModel::Model3D::update(float t, View& view)
         UpdateFunction(this);
 
 
-    applyTransformation();
+    applyTransformation(view);
 
 }
 
@@ -232,7 +244,7 @@ void RenderModel::Model3D::paint(View& view)
 {
     for (int index = 0; index < transformed_colors.size(); index++)
     {
-        transformed_colors[index] = getIluminatedColor(index);
+        transformed_colors[index] = getIluminatedColor(index, view);
     }
 
     for (auto mesh : meshList)
@@ -243,15 +255,12 @@ void RenderModel::Model3D::paint(View& view)
 }
 
 
-RenderModel::Model3D::Color RenderModel::Model3D::getIluminatedColor(int indice)
+RenderModel::Model3D::Color RenderModel::Model3D::getIluminatedColor(int indice, View& view)
 {
 
     vec3f N = vec3<float>::toVec3f(transformed_normals[indice]).normalize();
-    vec3f L = vec3<float>::toVec3f(view->Light->getDirection(transformed_vertices[indice])).normalize();
+    vec3f L = vec3<float>::toVec3f(view.Light->getDirection(transformed_vertices[indice])).normalize();
     vec3f vecColor = vec3<float>::toVec3f(original_colors[indice]);
-
-    //if (material_list.size() > 0)
-    //    vecColor *= material_list[0]->Kd.data.component.r;
 
     vecColor *= std::max(0.f, dot(N, L));
 

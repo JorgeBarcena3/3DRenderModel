@@ -1,33 +1,30 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
  *                                                                             *
- *  Started by Ángel on october of 2013                                        *
+ *  Started by Jorge on February of 2020                                       *
  *                                                                             *
  *  This is free software released into the public domain.                     *
  *                                                                             *
- *  angel.rodriguez@esne.edu                                                   *
+ *  j.barcenalumbreras@gmail.com                                               *
  *                                                                             *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// CAMARA UPDATE
-// SOLO FUNCIONA EN RELEASE
-// JERARQUIA DE ESCENA
 
 #include "../headers/View.hpp"
 #include "../headers/PointLight.hpp"
 #include "../headers/DirectionalLight.hpp"
+#include "../headers/Math.hpp"
 #include <SFML/Window.hpp>
 #include <SFML/OpenGL.hpp>
-#define PI 3.14159265359f
 
 using namespace sf;
 using namespace RenderModel;
 
-void rotateUpdate(Model3D* model)
+void planet_update(Model3D * model)
 {
     static float angle = 0.f;
 
-    angle += 0.01f;
+    angle += 0.8f;
 
     model->transform.rotation_y.set< Rotation3f::AROUND_THE_Y_AXIS >(angle * PI / 180);
     model->transform.rotation_x.set< Rotation3f::AROUND_THE_X_AXIS >(angle * PI / 180);
@@ -35,7 +32,7 @@ void rotateUpdate(Model3D* model)
 
 }
 
-void rotateYUpdate(Model3D* model)
+void asteroide(Model3D * model)
 {
     static float angle = 0.f;
 
@@ -45,113 +42,98 @@ void rotateYUpdate(Model3D* model)
 
 }
 
-void rotateXUpdate(Model3D* model)
-{
-    static float angle = 0.f;
-
-    angle += 0.025f;
-
-    model->transform.rotation_x.set< Rotation3f::AROUND_THE_X_AXIS >(angle * PI / 180);
-}
-
-void rotateZUpdate(Model3D* model)
-{
-    static float angle = 0.f;
-
-    angle += 0.025f;
-
-    model->transform.rotation_z.set< Rotation3f::AROUND_THE_Z_AXIS >(angle * PI / 180);
-}
-
-void displaceInX(Model3D* model)
-{
-    model->transform.addDisplacement(Point3f({ 0.1f, 0.f, 0.f }));
-}
-
-void displaceInY(Model3D* model)
-{
-    model->transform.addDisplacement(Point3f({ 0.f, 0.1f, 0.f }));
-}
-
-void displaceInZ(Model3D* model)
-{
-    model->transform.addDisplacement(Point3f({ 0.f, 0.f, 0.1f }));
-}
-
 void configScene(View& view)
 {
-    //view.addModel("Island",                         // Nombre
-    //    Model3D(                                    // Modelo
-    //        "..//..//assets//models//island.obj",   // Path
-    //        0.4f,                                  // Scale
-    //        Point3f({ 0,0,0 }),                      // Rotation
-    //        Point3f({ -0, -4, -10 }),                // Position
-    //        shared_ptr<View>(new View(view)),       // Vista
-    //        shared_ptr<Model3D>(nullptr)            // Padre
-    //    )
-    //);  
-    //
-    //view.addModel("Tree_1",                         // Nombre
-    //    Model3D(                                    // Modelo
-    //        "..//..//assets//models//lowpolytree.obj",   // Path
-    //        0.2f,                                  // Scale
-    //        Point3f({ 0,0,0 }),                      // Rotation
-    //        Point3f({ 0.8, 0, -10 }),                // Position
-    //        shared_ptr<View>(new View(view)),       // Vista
-    //        shared_ptr<Model3D>(nullptr)            // Padre
-    //    )
-    //);
-
-    //view.addModel("Tree_2",                         // Nombre
-    //    Model3D(                                    // Modelo
-    //        "..//..//assets//models//lowpolytree.obj",   // Path
-    //        0.08f,                                  // Scale
-    //        Point3f({ 0,0,0 }),                      // Rotation
-    //        Point3f({ -0.4, -0.2, -10 }),                // Position
-    //        shared_ptr<View>(new View(view)),       // Vista
-    //        shared_ptr<Model3D>(nullptr)            // Padre
-    //    )
-    //);
-
-    //view.addModel("Pato",                         // Nombre
-    //    Model3D(                                    // Modelo
-    //        "..//..//assets//models//10602_Rubber_Duck_v1_L3.obj",   // Path
-    //        0.03f,                                  // Scale
-    //        Point3f({ -90,0,0 }),                      // Rotation
-    //        Point3f({ -0.4, -0.3, -10 }),                // Position
-    //        shared_ptr<View>(new View(view)),       // Vista
-    //        shared_ptr<Model3D>(nullptr)            // Padre
-    //    )
-    //);    
-    //
-    //view.addModel("Tower",                         // Nombre
-    //    Model3D(                                    // Modelo
-    //        "..//..//assets//models//War_Tower.obj",   // Path
-    //        0.2f,                                  // Scale
-    //        Point3f({ 0,0,0 }),                      // Rotation
-    //        Point3f({ 0, -0.3, -9 }),                // Position
-    //        shared_ptr<View>(new View(view)),       // Vista
-    //        shared_ptr<Model3D>(nullptr)            // Padre
-    //    )
-    //);
-
-    view.addModel("Tree",                         // Nombre
-        Model3D(                                    // Modelo
-            "..//..//assets//models//lowpolytree.obj",   // Path
-            0.5f,                                  // Scale
-            Point3f({ 0,0,0 }),                      // Rotation
-            Point3f({ -0, -0, -10 }),                // Position
-            shared_ptr<View>(new View(view)),       // Vista
-            shared_ptr<Model3D>(nullptr)            // Padre
+    
+    view.addModel("Planet",                           // Nombre
+        new Model3D(                                  // Modelo
+            "..//..//assets//models//PlanetBlue2.obj",// Path
+            0.2f,                                     // Scale
+            Point3f({ 0,90,0 }),                      // Rotation
+            Point3f({ 0, 0, -10 }),                   // Position
+            view,                                     // Vista
+            nullptr                                   // Padre
+        )
+    ); 
+    
+    view.addModel("Tree_1",                           // Nombre
+        new Model3D(                                  // Modelo
+            "..//..//assets//models//lowpolytree.obj",// Path
+            1.0f,                                     // Scale
+            Point3f({ -0,0,90 }),                     // Rotation
+            Point3f({ -6, 0, 0 }),                    // Position
+            view,                                     // Vista
+            view.models3D["Planet"]                   // Padre
+        )
+    );
+    
+    view.addModel("Tree_2",                            // Nombre
+        new Model3D(                                   // Modelo
+            "..//..//assets//models//lowpolytree.obj", // Path
+            1.0f,                                      // Scale
+            Point3f({ -0,0,-90 }),                     // Rotation
+            Point3f({ 6, 0, 0 }),                      // Position
+            view,                                      // Vista
+            view.models3D["Planet"]                    // Padre
         )
     );
 
-    view.models3D["Tree"]->setUpdateFunction(rotateYUpdate);
+    view.addModel("Tree_3",                            // Nombre
+        new Model3D(                                   // Modelo
+            "..//..//assets//models//lowpolytree.obj", // Path
+            0.9f,                                      // Scale
+            Point3f({ -0,0,-0 }),                      // Rotation
+            Point3f({ 0, 5.5f, 0 }),                   // Position
+            view,                                      // Vista
+            view.models3D["Planet"]                    // Padre
+        )
+    );
+    
+    view.addModel("Tree_4",                            // Nombre
+        new Model3D(                                   // Modelo
+            "..//..//assets//models//lowpolytree.obj", // Path
+            0.5f,                                      // Scalele
+            Point3f({ -0,0,-180 }),                    // Rotationion
+            Point3f({ 0, -5.0f, 0 }),                  // Positionn
+            view,                                      // Vistaista
+            view.models3D["Planet"]                    // Padre
+        )
+    );  
+    
+    view.addModel("Asteroide_1",                      // Nombre
+        new Model3D(                                  // Modelo
+            "..//..//assets//models//PlanetPink1.obj",// Path
+            0.5f,                                     // Scale
+            Point3f({ -90,0,-0 }),                    // Rotation
+            Point3f({ 7, 5, 0 }),                     // Position
+            view,                                     // Vista
+            view.models3D["Planet"]                   // Padre
+        )
+    );
+    
+    view.addModel("Asteroide_2",                         // Nombre
+        new Model3D(                                     // Modelo
+            "..//..//assets//models//PlanetGreen1.obj",  // Path
+            0.2f,                                        // Scale
+            Point3f({0,0,-0 }),                          // Rotation
+            Point3f({ -7, 0, 0 }),                       // Position
+            view,                                        // Vista
+            view.models3D["Asteroide_1"]                 // Padre
+        )
+    );
+
+
+    view.models3D["Planet"]->setUpdateFunction(planet_update);
+    view.models3D["Asteroide_1"]->setUpdateFunction(asteroide);
+   
+
+    
 }
 
 int main()
 {
     Window window(VideoMode(800, 600), "3D Render Model | Jorge Barcena Lumbreras", Style::Titlebar | Style::Close, ContextSettings(32));
+       
 
     Camera camera(
         5,                                                        // Near
@@ -162,15 +144,15 @@ int main()
         toolkit::Point3f({ 0,-0,0 })                               // Rotation
     );
 
-    PointLight light(
-        Point3f({ 0,4,-2 }),      // Postion
-        View::Color({ 100,0,0 })  // Color
-    );
-
-    //DirectionalLight light(
-    //    Point3f(  { -0.5,0, 1 }), // Direction
+    //PointLight light(
+    //    Point3f({ 5,4,0 }),      // Postion
     //    View::Color({ 100,0,0 })  // Color
     //);
+
+    DirectionalLight light(
+        Point3f(  { -0.5,0, 1 }), // Direction
+        View::Color({ 100,0,0 })  // Color
+    );
 
     View view(
         window.getSize().x,   // Width
@@ -178,6 +160,8 @@ int main()
         camera,               // Camara
         light                 // Light
     );
+
+    
 
     //Configuramos la escena a previsualizar
     configScene(view);
@@ -230,5 +214,5 @@ int main()
 
     // Close the application:
 
-    return (EXIT_SUCCESS);
+ /*   return (EXIT_SUCCESS);*/
 }

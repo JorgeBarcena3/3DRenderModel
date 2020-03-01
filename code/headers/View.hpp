@@ -31,7 +31,9 @@ namespace RenderModel
     using toolkit::Point4f;
     class Light;
 
-
+    /*
+    * Clase que administra la vista de la pantalla
+    */
     class View
     {
 
@@ -39,30 +41,69 @@ namespace RenderModel
 
         typedef Color_Buffer_Rgba8888 Color_Buffer;
         typedef Color_Buffer::Color   Color;
-        typedef map<string, shared_ptr<Model3D>>  Models3D;
+        typedef map<string, Model3D * >  Models3D;
         
 
-
-
+        /*
+        * Ancho de la pantalla
+        */
         int width;
+
+        /*
+        * Alto de la pantalla
+        */
         int height;
 
+        /*
+        * Buffer de colores de la pantalla
+        */
         Color_Buffer               Color_buffer;
         Rasterizer< Color_Buffer > rasterizer;
+
+        /*
+        * Mapa de modelos 3D
+        */
         Models3D                   models3D;
+
+        /*
+        * Camara principal
+        */
         Camera                     mainCamera;
 
 
-    public:
+        /*
+        * Luz de la escena
+        */
+        shared_ptr< Light > Light;
 
-        Light * Light;
-
+        /*
+        * Constructor de la vista
+        */
         View(int width, int height, Camera camera, RenderModel::Light & lightPosition);
 
-        void addModel(string name, Model3D model);
+        /*
+        * Destructor
+        */
+        ~View();
+
+        /*
+        * Añade un modelo a la vista
+        */
+        void addModel(string name, Model3D * model);
+
+        /*
+        * Update de la vista
+        */
         void update(float t);
+
+        /*
+        * Renderiza los modelos 3D en la pantalla
+        */
         void paint();
 
+        /*
+        * Se encarga de recortar los limites de la pantalla
+        */
         vector< Point4i >  clip(const Point4i* const vertices, int* indices_begin, int* indices_end);
 
     };

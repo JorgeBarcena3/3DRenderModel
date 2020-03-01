@@ -1,3 +1,14 @@
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
+ *                                                                             *
+ *  Started by Jorge on February of 2020                                       *
+ *                                                                             *
+ *  This is free software released into the public domain.                     *
+ *                                                                             *
+ *  j.barcenalumbreras@gmail.com                                               *
+ *                                                                             *
+\* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 #include "..\headers\Mesh.hpp"
 #include "..\headers\View.hpp"
 #include "..\headers\Model3D.hpp"
@@ -61,7 +72,7 @@ void RenderModel::Mesh::render(View& view, Model3D& model)
             // Se rellena el polígono:
             const int clipIndice[] = { 0,1,2,3,4,5,6,7,8,9 };
 
-            if (display_vertices_clipped.size() > 0)
+            if (display_vertices_clipped.size() >= 3)
                 view.rasterizer.fill_convex_polygon_z_buffer(display_vertices_clipped.data(), clipIndice, clipIndice + display_vertices_clipped.size());
 
         }

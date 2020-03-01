@@ -20,7 +20,7 @@ using toolkit::Point4f;
 namespace RenderModel
 {
 
-    View::View(int width, int height, Camera _camera, RenderModel::Light &_light)
+    View::View(int width, int height, Camera _camera, RenderModel::Light& _light)
         :
         width(width),
         height(height),
@@ -32,9 +32,19 @@ namespace RenderModel
 
     }
 
-    void View::addModel(string name, Model3D model)
+    View::~View()
     {
-        models3D.insert(std::pair<string, shared_ptr<Model3D>>(name, shared_ptr<Model3D>(new Model3D(model))));
+        for (auto model : models3D)
+        {
+            if (model.second->parent == nullptr)
+                delete model.second;
+
+        }
+    }
+
+    void View::addModel(string name, Model3D* model)
+    {
+        models3D.insert(std::pair<string, Model3D*>(name, model));
     }
 
     void View::update(float t)
@@ -71,6 +81,6 @@ namespace RenderModel
         SutherlandHodgmanClipping::clip(vertices, indices_begin, indices_end, width, height, clipped_vertex);
 
         return clipped_vertex;
-    } 
+    }
 
 }

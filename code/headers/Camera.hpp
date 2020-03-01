@@ -1,11 +1,11 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
  *                                                                             *
- *  Started by Ángel on december of 2013                                       *
+ *  Started by Jorge on February of 2020                                       *
  *                                                                             *
  *  This is free software released into the public domain.                     *
  *                                                                             *
- *  angel.rodriguez@esne.edu                                                   *
+ *  j.barcenalumbreras@gmail.com                                               *
  *                                                                             *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

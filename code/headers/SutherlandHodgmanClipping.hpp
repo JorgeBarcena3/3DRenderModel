@@ -11,6 +11,9 @@ namespace RenderModel
     using toolkit::Point4f;
     using toolkit::Point4i;
 
+    /*
+    * Se encarga de recortar siguiendo el metodo de Sutherland-Hodgman
+    */
     class SutherlandHodgmanClipping
     {
         typedef Point4i  Vertexi;
@@ -18,6 +21,9 @@ namespace RenderModel
 
     public:
 
+        /*
+        * Recorta los vertices que se pasan en el array de vertices
+        */
         static void clip(const Point4i* const vertices, int* indices_begin, int* indices_end, int width, int height, vector<Point4i>& clipped_vertex)
         {
 
@@ -52,7 +58,7 @@ namespace RenderModel
             for (size_t i = 0; i < intermediateVertices.size(); i++)
             {
                 //Uno fuera y otro dentro
-                if (intermediateVertices[i][1] > height&& intermediateVertices[(i + 1) >= intermediateVertices.size() ? 0 : i + 1][1] <= height)
+                if (intermediateVertices[i][1] >= height && intermediateVertices[(i + 1) >= intermediateVertices.size() ? 0 : i + 1][1] < height)
                 {
                     Vertex newVertice = line_intersection(Vertex({ 0,height }), Vertex({ width, height }), intermediateVertices[i], intermediateVertices[(i + 1) >= intermediateVertices.size() ? 0 : i + 1]);
                     finalVertices.push_back(Vertexi({ newVertice[0], newVertice[1], newVertice[2], newVertice[3] }));
@@ -60,13 +66,13 @@ namespace RenderModel
 
                 }
                 //Uno dentro y otro fuera
-                else if (intermediateVertices[i][1] <= height && intermediateVertices[(i + 1) >= intermediateVertices.size() ? 0 : i + 1][1] > height)
+                else if (intermediateVertices[i][1] < height && intermediateVertices[(i + 1) >= intermediateVertices.size() ? 0 : i + 1][1] >= height)
                 {
                     Vertex newVertice = line_intersection(Vertex({ 0,height }), Vertex({ width, height }), intermediateVertices[i], intermediateVertices[(i + 1) >= intermediateVertices.size() ? 0 : i + 1]);
                     finalVertices.push_back(Vertexi({ newVertice[0], newVertice[1], newVertice[2], newVertice[3] }));
                 }
                 // SI los dos estan dentro
-                else if (intermediateVertices[i][1] <= height && intermediateVertices[(i + 1) >= intermediateVertices.size() ? 0 : i + 1][1] <= height)
+                else if (intermediateVertices[i][1] < height && intermediateVertices[(i + 1) >= intermediateVertices.size() ? 0 : i + 1][1] < height)
                 {
                     finalVertices.push_back(intermediateVertices[(i + 1) >= intermediateVertices.size() ? 0 : i + 1]);
                 }
@@ -80,7 +86,7 @@ namespace RenderModel
             for (size_t i = 0; i < intermediateVertices.size(); i++)
             {
                 //Uno fuera y otro dentro
-                if (intermediateVertices[i][0] > width&& intermediateVertices[(i + 1) >= intermediateVertices.size() ? 0 : i + 1][0] <= width)
+                if (intermediateVertices[i][0] >= width && intermediateVertices[(i + 1) >= intermediateVertices.size() ? 0 : i + 1][0] < width)
                 {
                     Vertex newVertice = line_intersection(Vertex({ width,0 }), Vertex({ width, height }), intermediateVertices[i], intermediateVertices[(i + 1) >= intermediateVertices.size() ? 0 : i + 1]);
                     finalVertices.push_back(Vertexi({ newVertice[0], newVertice[1], newVertice[2], newVertice[3] }));
@@ -88,13 +94,13 @@ namespace RenderModel
 
                 }
                 //Uno dentro y otro fuera
-                else if (intermediateVertices[i][0] <= width && intermediateVertices[(i + 1) >= intermediateVertices.size() ? 0 : i + 1][0] > width)
+                else if (intermediateVertices[i][0] < width && intermediateVertices[(i + 1) >= intermediateVertices.size() ? 0 : i + 1][0] >= width)
                 {
                     Vertex newVertice = line_intersection(Vertex({ width,0 }), Vertex({ width, height }), intermediateVertices[i], intermediateVertices[(i + 1) >= intermediateVertices.size() ? 0 : i + 1]);
                     finalVertices.push_back(Vertexi({ newVertice[0], newVertice[1], newVertice[2], newVertice[3] }));
                 }
                 // SI los dos estan dentro
-                else if (intermediateVertices[i][0] <= width && intermediateVertices[(i + 1) >= intermediateVertices.size() ? 0 : i + 1][0] <= width)
+                else if (intermediateVertices[i][0] < width && intermediateVertices[(i + 1) >= intermediateVertices.size() ? 0 : i + 1][0] < width)
                 {
                     finalVertices.push_back(intermediateVertices[(i + 1) >= intermediateVertices.size() ? 0 : i + 1]);
                 }
@@ -108,7 +114,7 @@ namespace RenderModel
             for (size_t i = 0; i < intermediateVertices.size(); i++)
             {
                 //Uno fuera y otro dentro
-                if (intermediateVertices[i][1] < 0 && intermediateVertices[(i + 1) >= intermediateVertices.size() ? 0 : i + 1][1] >= 0)
+                if (intermediateVertices[i][1] <= 0 && intermediateVertices[(i + 1) >= intermediateVertices.size() ? 0 : i + 1][1] > 0)
                 {
                     Vertex newVertice = line_intersection(Vertex({ 0,0 }), Vertex({ width, 0 }), intermediateVertices[i], intermediateVertices[(i + 1) >= intermediateVertices.size() ? 0 : i + 1]);
                     finalVertices.push_back(Vertexi({ newVertice[0], newVertice[1], newVertice[2], newVertice[3] }));
@@ -116,13 +122,13 @@ namespace RenderModel
 
                 }
                 //Uno dentro y otro fuera
-                else if (intermediateVertices[i][1] >= 0 && intermediateVertices[(i + 1) >= intermediateVertices.size() ? 0 : i + 1][1] < 0)
+                else if (intermediateVertices[i][1] > 0 && intermediateVertices[(i + 1) >= intermediateVertices.size() ? 0 : i + 1][1] <= 0)
                 {
                     Vertex newVertice = line_intersection(Vertex({ 0,0 }), Vertex({ width, 0 }), intermediateVertices[i], intermediateVertices[(i + 1) >= intermediateVertices.size() ? 0 : i + 1]);
                     finalVertices.push_back(Vertexi({ newVertice[0], newVertice[1], newVertice[2], newVertice[3] }));
                 }
                 // SI los dos estan dentro
-                else if (intermediateVertices[i][1] >= 0 && intermediateVertices[(i + 1) >= intermediateVertices.size() ? 0 : i + 1][1] >= 0)
+                else if (intermediateVertices[i][1] > 0 && intermediateVertices[(i + 1) >= intermediateVertices.size() ? 0 : i + 1][1] > 0)
                 {
                     finalVertices.push_back(intermediateVertices[(i + 1) >= intermediateVertices.size() ? 0 : i + 1]);
                 }
@@ -136,7 +142,7 @@ namespace RenderModel
             for (size_t i = 0; i < intermediateVertices.size(); i++)
             {
                 //Uno fuera y otro dentro
-                if (intermediateVertices[i][0] < 0 && intermediateVertices[(i + 1) >= intermediateVertices.size() ? 0 : i + 1][0] >= 0)
+                if (intermediateVertices[i][0] <= 0 && intermediateVertices[(i + 1) >= intermediateVertices.size() ? 0 : i + 1][0] > 0)
                 {
                     Vertex newVertice = line_intersection(Vertex({ 0,0 }), Vertex({ 0, height }), intermediateVertices[i], intermediateVertices[(i + 1) >= intermediateVertices.size() ? 0 : i + 1]);
                     finalVertices.push_back(Vertexi({ newVertice[0], newVertice[1], newVertice[2], newVertice[3] }));
@@ -144,13 +150,13 @@ namespace RenderModel
 
                 }
                 //Uno dentro y otro fuera
-                else if (intermediateVertices[i][0] >= 0 && intermediateVertices[(i + 1) >= intermediateVertices.size() ? 0 : i + 1][0] < 0)
+                else if (intermediateVertices[i][0] > 0 && intermediateVertices[(i + 1) >= intermediateVertices.size() ? 0 : i + 1][0] <= 0)
                 {
                     Vertex newVertice = line_intersection(Vertex({ 0,0 }), Vertex({ 0, height }), intermediateVertices[i], intermediateVertices[(i + 1) >= intermediateVertices.size() ? 0 : i + 1]);
                     finalVertices.push_back(Vertexi({ newVertice[0], newVertice[1], newVertice[2], newVertice[3] }));
                 }
                 // SI los dos estan dentro
-                else if (intermediateVertices[i][0] >= 0 && intermediateVertices[(i + 1) >= intermediateVertices.size() ? 0 : i + 1][0] >= 0)
+                else if (intermediateVertices[i][0] > 0 && intermediateVertices[(i + 1) >= intermediateVertices.size() ? 0 : i + 1][0] > 0)
                 {
                     finalVertices.push_back(intermediateVertices[(i + 1) >= intermediateVertices.size() ? 0 : i + 1]);
                 }
