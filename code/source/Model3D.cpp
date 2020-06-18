@@ -131,7 +131,7 @@ void RenderModel::Model3D::loadObj(const char* path)
 
                 int materialIndex = shapes[s].mesh.material_ids[matIndex] == -1 ? 0 : shapes[s].mesh.material_ids[matIndex];
 
-                /********
+                /*********
                  VERTICES
                 *********/
                 original_vertices.push_back(
@@ -142,7 +142,7 @@ void RenderModel::Model3D::loadObj(const char* path)
                            1.f
                         }));
 
-                /********
+                /*********
                  NORMALES
                 *********/
                 original_normals.push_back(
@@ -153,7 +153,7 @@ void RenderModel::Model3D::loadObj(const char* path)
                            0
                         }));
 
-                /********
+                /*********
                  COLORES
                 *********/
                 original_colors.push_back(Color());

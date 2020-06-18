@@ -47,7 +47,7 @@ void configScene(View& view)
     
     view.addModel("Planet",                           // Nombre
         new Model3D(                                  // Modelo
-            "..//..//assets//models//PlanetBlue2.obj",// Path
+            "..//..//binaries//assets//models//PlanetBlue2.obj",// Path
             0.2f,                                     // Scale
             Point3f({ 0,90,0 }),                      // Rotation
             Point3f({ 0, 0, -10 }),                   // Position
@@ -58,7 +58,7 @@ void configScene(View& view)
     
     view.addModel("Tree_1",                           // Nombre
         new Model3D(                                  // Modelo
-            "..//..//assets//models//lowpolytree.obj",// Path
+            "..//..//binaries//assets//models//lowpolytree.obj",// Path
             1.0f,                                     // Scale
             Point3f({ -0,0,90 }),                     // Rotation
             Point3f({ -6, 0, 0 }),                    // Position
@@ -69,7 +69,7 @@ void configScene(View& view)
     
     view.addModel("Tree_2",                            // Nombre
         new Model3D(                                   // Modelo
-            "..//..//assets//models//lowpolytree.obj", // Path
+            "..//..//binaries//assets//models//lowpolytree.obj", // Path
             1.0f,                                      // Scale
             Point3f({ -0,0,-90 }),                     // Rotation
             Point3f({ 6, 0, 0 }),                      // Position
@@ -80,7 +80,7 @@ void configScene(View& view)
 
     view.addModel("Tree_3",                            // Nombre
         new Model3D(                                   // Modelo
-            "..//..//assets//models//lowpolytree.obj", // Path
+            "..//..//binaries//assets//models//lowpolytree.obj", // Path
             0.9f,                                      // Scale
             Point3f({ -0,0,-0 }),                      // Rotation
             Point3f({ 0, 5.5f, 0 }),                   // Position
@@ -91,7 +91,7 @@ void configScene(View& view)
     
     view.addModel("Tree_4",                            // Nombre
         new Model3D(                                   // Modelo
-            "..//..//assets//models//lowpolytree.obj", // Path
+            "..//..//binaries//assets//models//lowpolytree.obj", // Path
             0.5f,                                      // Scalele
             Point3f({ -0,0,-180 }),                    // Rotationion
             Point3f({ 0, -5.0f, 0 }),                  // Positionn
@@ -102,7 +102,7 @@ void configScene(View& view)
     
     view.addModel("Asteroide_1",                      // Nombre
         new Model3D(                                  // Modelo
-            "..//..//assets//models//PlanetPink1.obj",// Path
+            "..//..//binaries//assets//models//PlanetPink1.obj",// Path
             0.5f,                                     // Scale
             Point3f({ -90,0,-0 }),                    // Rotation
             Point3f({ 7, 5, 0 }),                     // Position
@@ -113,7 +113,7 @@ void configScene(View& view)
     
     view.addModel("Asteroide_2",                         // Nombre
         new Model3D(                                     // Modelo
-            "..//..//assets//models//PlanetGreen1.obj",  // Path
+            "..//..//binaries//assets//models//PlanetGreen1.obj",  // Path
             0.2f,                                        // Scale
             Point3f({0,0,-0 }),                          // Rotation
             Point3f({ -7, 0, 0 }),                       // Position
@@ -214,5 +214,5 @@ int main()
 
     // Close the application:
 
- /*   return (EXIT_SUCCESS);*/
+ /**   return (EXIT_SUCCESS);*/
 }

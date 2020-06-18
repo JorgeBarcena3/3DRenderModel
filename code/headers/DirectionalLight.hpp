@@ -19,7 +19,7 @@
 namespace RenderModel
 {
 
-    /*
+    /**
     * Administra la direccional luz
     */
     class DirectionalLight : public Light
@@ -27,12 +27,12 @@ namespace RenderModel
 
     public:
 
-        /*
+        /**
         * Constructor
         */
         DirectionalLight(Point3f position, Color color);
 
-        /*
+        /**
         * Devuelve la direccion de la luz
         */
         virtual toolkit::Point4f getDirection(toolkit::Point4f pointInWorld) override;

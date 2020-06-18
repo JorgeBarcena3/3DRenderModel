@@ -28,7 +28,7 @@ using toolkit::Point3f;
 using toolkit::Point4f;
 
 
-/*** Implementacion de la clase de Vector2 con sus respectivos operandos
+/**** Implementacion de la clase de Vector2 con sus respectivos operandos
 */
 template <class T>
 class vec2
@@ -47,7 +47,7 @@ public:
 
 public:
 
-    /*** Implementacion del constructor por defecto (Suele estar vacio por defecto)
+    /**** Implementacion del constructor por defecto (Suele estar vacio por defecto)
     */
     vec2()
     {
@@ -55,17 +55,17 @@ public:
         y = 0;
     };
 
-    /*** Implementacion del constructor con parametros
+    /**** Implementacion del constructor con parametros
     */
     vec2(T a_X, T a_Y) : x(a_X), y(a_Y) {
     };
 
-    /*** Implementacion del constructor con parametros
+    /**** Implementacion del constructor con parametros
     */
     vec2(const vec2<T>& _a) : x(_a.x), y(_a.y) {
     };
 
-    /*** Operacion de igualacion
+    /**** Operacion de igualacion
     */
     vec2& operator=(const vec2& vec) {
 
@@ -74,7 +74,7 @@ public:
         return *this;
     };
 
-    /*** Operacion de suma
+    /**** Operacion de suma
     */
     vec2& operator+=(const vec2& vec2) {
 
@@ -83,7 +83,7 @@ public:
         return *this;
     };
 
-    /*** Operacion de suma
+    /**** Operacion de suma
     */
     template <class T>
     vec2<T> operator+(const vec2<T> vec2) {
@@ -91,7 +91,7 @@ public:
         return vec2<T>(*this) -= vec2;
     }
 
-    /*** Operacion de resta
+    /**** Operacion de resta
     */
     vec2& operator-=(const vec2& vec2) {
 
@@ -101,7 +101,7 @@ public:
         return *this;
     };
 
-    /*** Operacion de resta
+    /**** Operacion de resta
     */
     template <class T>
     vec2<T>  operator-(const vec2<T>& vec2) {
@@ -110,7 +110,7 @@ public:
 
     };
 
-    /*** Producto de un vector por un número
+    /**** Producto de un vector por un número
     */
     vec2& operator*=(T _num) {
 
@@ -119,7 +119,7 @@ public:
         return *this;
     };
 
-    /*** Operacion de Multiplicacion
+    /**** Operacion de Multiplicacion
     */
     template <class T>
     vec2<T>  operator*(T _num) {
@@ -129,7 +129,7 @@ public:
 
     };
 
-    /*** Division de un vector entre un número
+    /**** Division de un vector entre un número
     */
     vec2& operator/=(T _num) {
         x /= _num;
@@ -137,7 +137,7 @@ public:
         return *this;
     };
 
-    /*** Operacion de Multiplicacion
+    /**** Operacion de Multiplicacion
     */
     vec2<T>  operator*(T _num) {
 
@@ -146,19 +146,19 @@ public:
 
     };
 
-    /*** Operacion de comparacion
+    /**** Operacion de comparacion
     */
     bool operator==(const vec2<T>& vec2) {
         return (*this.x == vec2.x && *this.y == vec2.y);
     };
 
-    /*** Operacion de distinto de
+    /**** Operacion de distinto de
     */
     bool operator!=(const vec2<T>& vec2) {
         return (*this.x != vec2.x || *this.y != vec2.y);
     };
 
-    /*** Operador corchetes constante
+    /**** Operador corchetes constante
     */
     const T& operator[](size_t a_Index) const {
 
@@ -166,7 +166,7 @@ public:
 
     };
 
-    /*** Operador corchetes constante
+    /**** Operador corchetes constante
     */
     T& operator[](size_t a_Index) {
 
@@ -174,7 +174,7 @@ public:
 
     };
 
-    /*** Producto escalar de vectores
+    /**** Producto escalar de vectores
     */
     T producto_escalar(vec2 const& vec2) const {
 
@@ -182,7 +182,7 @@ public:
 
     };
 
-    /*** Nomaliza el vector
+    /**** Nomaliza el vector
     */
     vec2& normalize() {
 
@@ -194,7 +194,7 @@ public:
     };
 
 
-    /*** Inversa de la longitud
+    /**** Inversa de la longitud
     */
     vec2& inv_length() {
 
@@ -202,7 +202,7 @@ public:
 
     };
 
-    /*** Longitud del vector
+    /**** Longitud del vector
     */
     T length() const {
 
@@ -212,7 +212,7 @@ public:
 };
 
 
-/*** Operacion de Multiplicacion
+/**** Operacion de Multiplicacion
 */
 template <class T>
 vec2<T>  operator *(T _num, const vec2<T>& _vec) {
@@ -222,7 +222,7 @@ vec2<T>  operator *(T _num, const vec2<T>& _vec) {
 
 };
 
-/*** Operacion de division
+/**** Operacion de division
 */
 template <class T>
 vec2<T>  operator/(T _num, const vec2<T>& _vec) {
@@ -232,7 +232,7 @@ vec2<T>  operator/(T _num, const vec2<T>& _vec) {
 
 };
 
-/*** Clase para almacenar vectores de 3 dimensiones
+/**** Clase para almacenar vectores de 3 dimensiones
 */
 template <class T>
 class vec3 {
@@ -258,24 +258,24 @@ public:
 
 public:
 
-    /*** Constructor por defecto (Según el estandar debe estar vacio)
+    /**** Constructor por defecto (Según el estandar debe estar vacio)
     */
     vec3() {
 
         x = z = y = 0;
     };
 
-    /*** Constructor con parametros
+    /**** Constructor con parametros
     */
     vec3(T a_X, T a_Y, T a_Z) : x(a_X), y(a_Y), z(a_Z) {
     };
 
-    /*** Constructor con parametros
+    /**** Constructor con parametros
     */
     vec3(const vec3<T>& _a) : x(_a.x), y(_a.y), z(_a.z) {
     };
 
-    /*** Operador de igualacion
+    /**** Operador de igualacion
     */
     vec3& operator=(const vec3& vec) {
 
@@ -285,7 +285,7 @@ public:
         return *this;
     };
 
-    /*** Operador de suma
+    /**** Operador de suma
     */
     vec3& operator+=(const vec3& vec2) {
 
@@ -295,14 +295,14 @@ public:
         return *this;
     };
 
-    /*** Operador de suma
+    /**** Operador de suma
     */
     vec3<T> operator+(const vec3<T>& vec2) {
         vec3 <T> result(*this);
         return result += vec2;
     };
 
-    /*** Operador de resta
+    /**** Operador de resta
     */
     vec3& operator-=(const vec3& vec2) {
 
@@ -312,14 +312,14 @@ public:
         return *this;
     };
 
-    /*** Operador de resta
+    /**** Operador de resta
     */
     vec3<T> operator-(const vec3<T>& vec2) {
         vec3 <T> result(*this);
         return result -= vec2;
     };
 
-    /*** Operador de multiplicacion
+    /**** Operador de multiplicacion
     */
     vec3& operator*=(T _num) {
 
@@ -330,14 +330,14 @@ public:
 
     };
 
-    /*** Operador de multiplicacion
+    /**** Operador de multiplicacion
     */
     vec3<T> operator*(T _num) {
         vec3 <T> result(*this);
         return result *= _num;
     };
 
-    /*** Operador de division
+    /**** Operador de division
     */
     vec3& operator/=(T _num) {
 
@@ -348,14 +348,14 @@ public:
     };
 
 
-    /*** Operador de multiplicacion
+    /**** Operador de multiplicacion
     */
     vec3<T> operator/(T _num) {
         vec3 <T> result(*this);
         return result /= _num;
     };
 
-    /*** Operador corchetes constante
+    /**** Operador corchetes constante
     */
     T& operator[](size_t a_Index) const {
 
@@ -363,7 +363,7 @@ public:
 
     };
 
-    /*** Operador corchetes constante
+    /**** Operador corchetes constante
     */
     T& operator[](size_t a_Index) {
 
@@ -371,19 +371,19 @@ public:
 
     };
 
-    /*** Operador distinto de
+    /**** Operador distinto de
     */
     bool operator!=(const vec3<T>& vec2) {
         return (*this.x == vec2.x && *this.y == vec2.y && *this.z == vec2.z);
     };
 
-    /*** Operador comparador
+    /**** Operador comparador
     */
     bool operator==(const vec3<T>& vec2) {
         return (*this.x == vec2.x && *this.y == vec2.y && *this.z == vec2.z);
     };
 
-    /*** Producto escalar de vectores
+    /**** Producto escalar de vectores
     */
     T producto_escalar(vec3 const& vec2) const {
 
@@ -391,7 +391,7 @@ public:
 
     };
 
-    /*** Operacion de cross. Obtiene el vector perpendicular dados dos vectores
+    /**** Operacion de cross. Obtiene el vector perpendicular dados dos vectores
     */
     vec3 cross(vec3 const& vec2) const {
 
@@ -399,7 +399,7 @@ public:
 
     };
 
-    /*** Operacion de normalizacion
+    /**** Operacion de normalizacion
     */
     vec3& normalize() {
 
@@ -412,7 +412,7 @@ public:
 
     };
 
-    /*** Inversa de la longitud del vector
+    /**** Inversa de la longitud del vector
     */
     T invLength() const {
 
@@ -420,7 +420,7 @@ public:
 
     };
 
-    /*** Longitud del vector
+    /**** Longitud del vector
     */
     T length() const {
 
@@ -445,7 +445,7 @@ public:
 };
 
 
-/*** Operacion de Multiplicacion
+/**** Operacion de Multiplicacion
 */
 template <class T>
 vec3<T>  operator *(T _num, const vec3<T>& _vec) {
@@ -455,7 +455,7 @@ vec3<T>  operator *(T _num, const vec3<T>& _vec) {
 
 };
 
-/*** Operacion de division
+/**** Operacion de division
 */
 template <class T>
 vec3<T>  operator/(T _num, const vec3<T>& _vec) {
@@ -466,7 +466,7 @@ vec3<T>  operator/(T _num, const vec3<T>& _vec) {
 };
 
 
-/*** Operacion de producto escalar
+/**** Operacion de producto escalar
 */
 template <class T>
 float producto_escalar(const vec3<T>& vec1, const vec3<T>& vec2) {

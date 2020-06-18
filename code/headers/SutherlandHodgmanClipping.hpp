@@ -11,7 +11,7 @@ namespace RenderModel
     using toolkit::Point4f;
     using toolkit::Point4i;
 
-    /*
+    /**
     * Se encarga de recortar siguiendo el metodo de Sutherland-Hodgman
     */
     class SutherlandHodgmanClipping
@@ -21,7 +21,7 @@ namespace RenderModel
 
     public:
 
-        /*
+        /**
         * Recorta los vertices que se pasan en el array de vertices
         */
         static void clip(const Point4i* const vertices, int* indices_begin, int* indices_end, int width, int height, vector<Point4i>& clipped_vertex)

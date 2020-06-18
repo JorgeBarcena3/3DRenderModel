@@ -20,7 +20,7 @@ namespace RenderModel {
     using toolkit::Translation3f;
     using toolkit::Transformation3f;
 
-    /*
+    /**
     * Clase que va a manejar un modelo 3D
     */
     class Transform
@@ -29,49 +29,49 @@ namespace RenderModel {
 
     public:
 
-        /*
+        /**
         * Escala del modelo
         */
         Scaling3f     scale;
 
-        /*
+        /**
         * Rotacion en X del modelo
         */
         Rotation3f    rotation_x;
 
-        /*
+        /**
         * Rotacion en Y del modelo
         */
         Rotation3f    rotation_y;
 
-        /*
+        /**
         * Rotacion en Z del modelo
         */
         Rotation3f    rotation_z;
 
-        /*
+        /**
         * Translacion del modelo
         */
         Translation3f translation;
 
     public:
 
-        /*
+        /**
         * Constructor de la clase matriz
         */
         Transform(Point3f position, Point3f rotation, float scale);
 
-        /*
+        /**
         * Devuelve la matriz de transformacion
         */
         const Transformation3f getTransformation();
         
-        /*
+        /**
         * Devuelve la matriz de transformacion
         */
         const Transformation3f getInverseTransformation();
 
-        /*
+        /**
         * Añade un vector de desplazamiento a un objeto
         */
         void addDisplacement(Point3f displacememnt);

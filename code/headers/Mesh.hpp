@@ -28,7 +28,7 @@ namespace RenderModel {
     class View;
     class Material;
 
-    /*
+    /**
     * Guarda la informacion de un mesh en un modelo 3D
     */
     class Mesh
@@ -43,27 +43,27 @@ namespace RenderModel {
 
     private:
 
-        /*
+        /**
         * Indices de la mesh con respecto a el modelo 3D
         */
         Index_Buffer               indices;
 
     public:
 
-        /*
+        /**
         * Constructor que se inicializa con los indices relativos al modelo3D
         */
         Mesh(vector<int> indices);
         ~Mesh();
 
-        /*
+        /**
         * Renderiza el mesh
         */
         void render(View& view, Model3D & model);
 
     private:
 
-        /*
+        /**
         * Se determina si la cara se debe renderizar o no
         */
         bool is_frontface(const Vertex* const projected_vertices, const int* const indices);

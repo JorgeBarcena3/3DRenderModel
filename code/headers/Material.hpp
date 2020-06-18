@@ -18,7 +18,7 @@
 
 namespace RenderModel {
 
-    /*
+    /**
     * Guarda la informacion relativa al material
     */
     class Material
@@ -29,17 +29,17 @@ namespace RenderModel {
 
     public:
 
-        /*
+        /**
         * Color ambiente
         */
         Model3D::Color Ka;
         
-        /*
+        /**
         * Color difuso
         */
         Model3D::Color Kd;
 
-        /*
+        /**
         * Color especular
         */
         Model3D::Color Ks;

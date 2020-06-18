@@ -18,7 +18,7 @@
 namespace RenderModel
 {
 
-    /*
+    /**
     * Administra la luz
     */
     class Light
@@ -29,24 +29,24 @@ namespace RenderModel
 
     protected:
 
-        /*
+        /**
         * Posicion de la luz
         */
         toolkit::Point3f position;
 
-        /*
+        /**
         * Color de la luz
         */
         Color            color;
 
     public:
 
-        /*
+        /**
         * Constructor de la luz
         */
         Light(Point3f position, Color color);
 
-        /*
+        /**
         * Direccion de la luz a una posicion
         */
         virtual toolkit::Point4f getDirection(toolkit::Point4f pointInWorld) = 0;
